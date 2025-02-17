@@ -1,0 +1,36 @@
+[versions]
+# https://modrinth.com/mod/architectury-api/versions
+architectury = "15.0.1"
+
+# https://parchmentmc.org/docs/getting-started
+parchment-minecraft = "1.21.4"
+parchment = "2025.01.5"
+
+# https://projects.neoforged.net/neoforged/neoforge
+neoforge = "21.4.59-beta"
+
+# https://fabricmc.net/develop
+fabric-loader = "0.16.10"
+fabric-api = "0.114.3+1.21.4"
+
+# https://maven.jamalam.tech/#/releases
+jamlib = "1.2.2+1.21.4"
+
+# https://modrinth.com/mod/modmenu/versions
+modmenu = "13.0.0"
+
+[libraries]
+architectury-common = { module = "dev.architectury:architectury", version.ref = "architectury" }
+architectury-fabric = { module = "dev.architectury:architectury-fabric", version.ref = "architectury" }
+architectury-neoforge = { module = "dev.architectury:architectury-neoforge", version.ref = "architectury" }
+
+neoforge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
+
+fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
+fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
+
+jamlib-common = { module = "io.github.jamalam360:jamlib", version.ref = "jamlib" }
+jamlib-fabric = { module = "io.github.jamalam360:jamlib-fabric", version.ref = "jamlib" }
+jamlib-neoforge = { module = "io.github.jamalam360:jamlib-neoforge", version.ref = "jamlib" }
+
+modmenu = { module = "maven.modrinth:modmenu", version.ref = "modmenu" }
