@@ -1,41 +1,41 @@
 modLoader = "javafml"
 loaderVersion = "[1,)"
 license = "MIT"
-issueTrackerURL="https://github.com/{{github_owner}}/{{github_repo}}/issues"
+issueTrackerURL="https://github.com/JamCoreModding/sort-it-out/issues"
 
 [[mods]]
-modId = "{{mod_id}}"
+modId = "sort_it_out"
 version = "${version}"
-displayName = "{{name}}"
-displayURL="https://github.com/{{github_owner}}/{{github_repo}}"
+displayName = "Sort It Out!"
+displayURL="https://github.com/JamCoreModding/sort-it-out"
 logoFile = "icon.png"
-authors = "{{author}}"
+authors = "Jamalam"
 description = '''
-{{description}}
+A capable inventory sorting mod that works either client-side or server-side
 '''
 
-[[dependencies.{{mod_id}}]]
+[[dependencies.sort_it_out]]
 modId = "neoforge"
 type = "required"
 versionRange = "[${neoforge_version},)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.{{mod_id}}]]
+[[dependencies.sort_it_out]]
 modId = "minecraft"
 type = "required"
 versionRange = "[${minecraft_version},)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.{{mod_id}}]]
+[[dependencies.sort_it_out]]
 modId = "architectury"
 type = "required"
 versionRange = "[${architectury_version},)"
 ordering = "AFTER"
 side = "BOTH"
 
-[[dependencies.{{mod_id}}]]
+[[dependencies.sort_it_out]]
 modId = "jamlib"
 type = "required"
 versionRange = "[${jamlib_version},)"
@@ -43,4 +43,7 @@ ordering = "AFTER"
 side = "BOTH"
 
 [[mixins]]
-config = "{{mod_id}}.mixins.json"
+config = "sort_it_out.mixins.json"
+
+[[mixins]]
+config = "sort_it_out.client.mixins.json"

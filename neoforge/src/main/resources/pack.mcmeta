@@ -1,6 +1,6 @@
 {
     "pack": {
-        "description": "{{ name }}",
+        "description": "Sort It Out!",
         "pack_format": 15
     }
 }

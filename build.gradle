@@ -1,20 +1,15 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "1.9-SNAPSHOT" apply false
-    {{#if unified_publishing}}
     id "me.shedaniel.unified-publishing" version "0.1.+" apply false
-    {{/if}}
-    {{#if github_publish}}
     id "com.github.breadmoirai.github-release" version "2.4.1"
-    {{/if}}
 }
-{{#if github_publish}}
 
 if (System.getenv("GITHUB_TOKEN") != null) {
     githubRelease {
         token(System.getenv("GITHUB_TOKEN"))
-        owner("{{ github_owner }}")
-        repo("{{ github_repo }}")
+        owner("JamCoreModding")
+        repo("sort-it-out")
         tagName("${project.version}")
         releaseName("V${project.version}")
         body(project.rootProject.file("CHANGELOG.md").text)
@@ -25,7 +20,6 @@ if (System.getenv("GITHUB_TOKEN") != null) {
         }
     }
 }
-{{/if}}
 
 subprojects {
     apply plugin: "dev.architectury.loom"
@@ -47,7 +41,7 @@ subprojects {
                     'Implementation-Version'  : project.jar.archiveVersion,
                     'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
                     'Built-On-Minecraft'      : minecraft_version,
-                    'JamLib-File-Name'        : "{{mod_id}}-${project.base.archivesName.get()}-${rootProject.version}.jar",
+                    'JamLib-File-Name'        : "sort_it_out-${project.base.archivesName.get()}-${rootProject.version}.jar",
             ])
         }
     }
@@ -89,7 +83,7 @@ allprojects {
     }
 
     base {
-        archivesName = "{{mod_id}}"
+        archivesName = "sort_it_out"
     }
 
     tasks.withType(JavaCompile) {
@@ -102,16 +96,10 @@ allprojects {
     java {
         withSourcesJar()
     }
-    {{#ifCond github_publish '||' unified_publishing}}
 
     tasks.publish {
-        {{#if github_publish}}
         dependsOn(":githubRelease")
-        {{/if}}
-        {{#if unified_publishing}}
         dependsOn("fabric:publishUnified")
         dependsOn("neoforge:publishUnified")
-        {{/if}}
     }
-    {{/ifCond}}
 }

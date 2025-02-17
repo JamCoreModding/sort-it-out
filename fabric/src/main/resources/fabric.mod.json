@@ -1,27 +1,31 @@
 {
     "schemaVersion": 1,
-    "id": "{{ mod_id }}",
+    "id": "sort_it_out",
     "version": "${version}",
-    "name": "{{ name }}",
-    "description": "{{ description }}",
+    "name": "Sort It Out!",
+    "description": "A capable inventory sorting mod that works either client-side or server-side",
     "authors": [
-        "{{ author }}"
+        "Jamalam"
     ],
     "contact": {
-        "homepage": "https://github.com/{{github_owner}}/{{github_repo}}",
-        "sources": "https://github.com/{{github_owner}}/{{github_repo}}",
-        "issues": "https://github.com/{{github_owner}}/{{github_repo}}/issues"
+        "homepage": "https://github.com/JamCoreModding/sort-it-out",
+        "sources": "https://github.com/JamCoreModding/sort-it-out",
+        "issues": "https://github.com/JamCoreModding/sort-it-out/issues"
     },
     "license": "MIT",
-    "icon": "assets/{{mod_id}}/icon.png",
+    "icon": "assets/sort_it_out/icon.png",
     "environment": "*",
     "entrypoints": {
         "main": [
-            "{{group}}.{{mod_id}}.fabric.{{main_class}}Fabric"
+            "io.github.jamalam360.sort_it_out.fabric.SortItOutFabric"
+        ],
+        "client": [
+            "io.github.jamalam360.sort_it_out.fabric.SortItOutClientFabric"
         ]
     },
     "mixins": [
-        "{{mod_id}}.mixins.json"
+        "sort_it_out.mixins.json",
+        "sort_it_out.client.mixins.json"
     ],
     "depends": {
         "fabric": ">=${fabric_api_version}",

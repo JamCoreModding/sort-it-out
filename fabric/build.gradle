@@ -1,8 +1,6 @@
 plugins {
     id "com.github.johnrengelman.shadow" version "8.1.1"
-    {{#if unified_publishing}}
     id "me.shedaniel.unified-publishing"
-    {{/if}}
 }
 
 architectury {
@@ -11,7 +9,7 @@ architectury {
 }
 
 base {
-    archivesName = "{{mod_id}}-fabric"
+    archivesName = "sort_it_out-fabric"
 }
 
 configurations {
@@ -32,7 +30,6 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
-{{#if unified_publishing}}
 
 if (System.getenv("CURSEFORGE_API_KEY") != null && System.getenv("MODRINTH_API_KEY") != null) {
 // Uncomment these lines and fill in the IDs when ready to publish :)
@@ -75,7 +72,6 @@ if (System.getenv("CURSEFORGE_API_KEY") != null && System.getenv("MODRINTH_API_K
 //        }
 //    }
 }
-{{/if}}
 
 processResources {  
 	def substitutions = [

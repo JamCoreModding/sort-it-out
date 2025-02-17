@@ -2,6 +2,17 @@ architectury {
     common(rootProject.enabled_platforms.split(","))
 }
 
+loom {
+    splitEnvironmentSourceSets()
+
+    mods {
+        sort_it_out {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+}
+
 dependencies {
     modImplementation libs.fabric.loader
     modImplementation libs.architectury.common

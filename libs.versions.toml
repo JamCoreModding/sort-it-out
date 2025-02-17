@@ -4,7 +4,7 @@ architectury = "15.0.1"
 
 # https://parchmentmc.org/docs/getting-started
 parchment-minecraft = "1.21.4"
-parchment = "2025.01.5"
+parchment = "2025.02.16"
 
 # https://projects.neoforged.net/neoforged/neoforge
 neoforge = "21.4.59-beta"
