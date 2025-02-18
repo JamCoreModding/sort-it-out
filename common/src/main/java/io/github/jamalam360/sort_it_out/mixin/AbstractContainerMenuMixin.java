@@ -1,12 +1,11 @@
 package io.github.jamalam360.sort_it_out.mixin;
 
-import io.github.jamalam360.sort_it_out.SortItOut;
-import io.github.jamalam360.sort_it_out.sort.ContainerSorter;
+import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
+import io.github.jamalam360.sort_it_out.sort.ContainerSorterUtil;
+import io.github.jamalam360.sort_it_out.sort.QuickSortContainerSorter;
 import io.github.jamalam360.sort_it_out.sort.ServerSortableContainer;
-import io.github.jamalam360.sort_it_out.sort.SortableContainer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
@@ -35,14 +34,7 @@ public abstract class AbstractContainerMenuMixin {
 	private void sort_it_out$triggerSortOnMiddleClick(int slotId, int button, ClickType clickType, Player player, CallbackInfo ci) {
 		if (0 <= slotId && slotId < this.slots.size() && !this.getSlot(slotId).hasItem() && button == 2 && !player.level().isClientSide) {
 			Container container = this.slots.get(slotId).container;
-			SortableContainer sortableContainer = new ServerSortableContainer(container);
-
-			if (container instanceof Inventory) {
-				ContainerSorter.sortContainer(sortableContainer, 9, 27, SortItOut.getPlayerPreferences(player));
-			} else {
-				ContainerSorter.sortContainer(sortableContainer, SortItOut.getPlayerPreferences(player));
-			}
-
+			ContainerSorterUtil.sortWithQuickSort(container, new ServerSortableContainer(container), ServerUserPreferences.INSTANCE.getPlayerPreferences(player));
 			ci.cancel();
 		}
 	}

@@ -1,8 +1,6 @@
-package io.github.jamalam360.sort_it_out;
+package io.github.jamalam360.sort_it_out.preference;
 
 import io.github.jamalam360.sort_it_out.util.Comparators;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Comparator;

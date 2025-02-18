@@ -1,5 +1,7 @@
-package io.github.jamalam360.sort_it_out;
+package io.github.jamalam360.sort_it_out.network;
 
+import io.github.jamalam360.sort_it_out.SortItOut;
+import io.github.jamalam360.sort_it_out.preference.UserPreferences;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
