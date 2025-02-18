@@ -22,10 +22,20 @@ public class ServerSortableContainer implements SortableContainer {
 
 	@Override
 	public void mergeStacks(int destination, int source) {
-		int newDestinationCount = Math.min(this.container.getItem(destination).getCount() + this.container.getItem(source).getCount(), this.container.getItem(source).getMaxStackSize());
-		int newSourceCount = this.container.getItem(source).getCount() - newDestinationCount - this.container.getItem(destination).getCount();
-		this.container.getItem(destination).setCount(newDestinationCount);
-		this.container.getItem(source).setCount(newSourceCount);
+		ItemStack sourceItem = this.getItem(source);
+		int sourceCount = sourceItem.getCount();
+		ItemStack destinationItem = this.getItem(destination);
+		int destinationCount = destinationItem.getCount();
+
+		if ((!sourceItem.isEmpty() || !destinationItem.isEmpty()) && destination != source) {
+			if (destinationCount + sourceCount <= destinationItem.getMaxStackSize()) {
+				this.container.setItem(source, ItemStack.EMPTY);
+				this.container.setItem(destination, destinationItem.copyWithCount(destinationCount + sourceCount));
+			} else {
+				this.container.setItem(source, sourceItem.copyWithCount(sourceCount - (destinationItem.getMaxStackSize() - destinationCount)));
+				this.container.setItem(destination, destinationItem.copyWithCount(destinationItem.getMaxStackSize()));
+			}
+		}
 	}
 
 	@Override

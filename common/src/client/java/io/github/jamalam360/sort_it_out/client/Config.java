@@ -6,11 +6,13 @@ import io.github.jamalam360.jamlib.config.ConfigManager;
 import io.github.jamalam360.sort_it_out.network.C2SUserPreferencesUpdatePacket;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 
 import java.util.List;
 
 public class Config extends UserPreferences implements ConfigExtensions<Config> {
-	public int packetSendInterval = 20;
+	public int packetSendInterval = 3;
 
 	// TODO: replace this with a dedicated on save method in JamLib
 	@Override
@@ -25,7 +27,7 @@ public class Config extends UserPreferences implements ConfigExtensions<Config> 
 	}
 
 	public void sync() {
-		if (NetworkManager.canServerReceive(C2SUserPreferencesUpdatePacket.TYPE)) {
+		if (NetworkManager.canServerReceive(C2SUserPreferencesUpdatePacket.TYPE) && !Minecraft.getInstance().isSingleplayer()) {
 			SortItOut.LOGGER.info("Sending updated preferences to server");
 			NetworkManager.sendToServer(new C2SUserPreferencesUpdatePacket(this));
 		}

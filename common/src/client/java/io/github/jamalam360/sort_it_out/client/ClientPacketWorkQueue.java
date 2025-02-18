@@ -57,7 +57,7 @@ public class ClientPacketWorkQueue {
 		ServerboundContainerClickPacket toPacket();
 	}
 
-	public record PickupItemAction(AbstractContainerMenu menu, int slot, ItemStack pickedUp, ItemStack remainder) implements ClickAction {
+	public record PickupItemAction(AbstractContainerMenu menu, int slot, ItemStack pickedUp) implements ClickAction {
 		@Override
 		public ServerboundContainerClickPacket toPacket() {
 			return new ServerboundContainerClickPacket(
@@ -67,7 +67,7 @@ public class ClientPacketWorkQueue {
 					GLFW.GLFW_MOUSE_BUTTON_LEFT,
 					ClickType.PICKUP,
 					this.pickedUp(),
-					Int2ObjectMaps.singleton(this.slot(), this.remainder())
+					Int2ObjectMaps.singleton(this.slot(), ItemStack.EMPTY)
 			);
 		}
 	}

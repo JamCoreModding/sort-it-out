@@ -31,14 +31,22 @@ public class ClientSortableContainer implements SortableContainer {
 	@Override
 	public void mergeStacks(int destination, int source) {
 		ItemStack sourceItem = this.getItem(source);
+		int sourceCount = sourceItem.getCount();
 		ItemStack destinationItem = this.getItem(destination);
-		int newDestinationCount = Math.min(destinationItem.getCount() + sourceItem.getCount(), sourceItem.getMaxStackSize());
-		int newSourceCount = sourceItem.getCount() - newDestinationCount - destinationItem.getCount();
-		ItemStack pickedUpItem = sourceItem.copyWithCount(sourceItem.getCount() - newSourceCount);
-		ItemStack newSourceItem = sourceItem.copyWithCount(newSourceCount);
-		ItemStack newDestinationItem = destinationItem.copyWithCount(newDestinationCount);
-		this.splitPickup(source, pickedUpItem, newSourceItem);
-		this.place(destination, newDestinationItem);
+		int destinationCount = destinationItem.getCount();
+
+		if ((!sourceItem.isEmpty() || !destinationItem.isEmpty()) && destination != source) {
+			if (destinationCount + sourceCount <= destinationItem.getMaxStackSize()) {
+				this.pickup(source);
+				this.place(destination, destinationItem.copyWithCount(destinationCount + sourceCount));
+			} else {
+				int requiredToFillDestination = destinationItem.getMaxStackSize() - destinationCount;
+				ItemStack remainder = sourceItem.copyWithCount(sourceCount - requiredToFillDestination);
+				this.pickup(source);
+				this.placeExpectingRemainder(destination, destinationItem.copyWithCount(destinationItem.getMaxStackSize()), remainder);
+				this.place(source, remainder);
+			}
+		}
 	}
 
 	@Override
@@ -46,21 +54,21 @@ public class ClientSortableContainer implements SortableContainer {
 		ItemStack aItem = this.getItem(a).copy();
 		ItemStack bItem = this.getItem(b).copy();
 
-		if (aItem.isEmpty() && bItem.isEmpty() || a == b) {
-			return;
-		} else if (aItem.isEmpty()) {
-			this.moveStack(b, a);
-		} else if (bItem.isEmpty()) {
-			this.moveStack(a, b);
-		} else if (!ContainerSorterUtil.canMerge(aItem, bItem)) {
-			this.pickup(a);
-			this.placeAndPickup(b, aItem);
-			this.place(a, bItem);
-		} else {
-			int tempSlot = this.findWorkingSlot(aItem, a, b);
-			this.moveStack(a, tempSlot);
-			this.moveStack(b, a);
-			this.moveStack(tempSlot, b);
+		if ((!aItem.isEmpty() || !bItem.isEmpty()) && a != b) {
+			if (aItem.isEmpty()) {
+				this.moveStack(b, a);
+			} else if (bItem.isEmpty()) {
+				this.moveStack(a, b);
+			} else if (!ContainerSorterUtil.canMerge(aItem, bItem)) {
+				this.pickup(a);
+				this.placeAndPickupItemInSlot(b, aItem);
+				this.place(a, bItem);
+			} else {
+				int tempSlot = this.findWorkingSlot(aItem, a, b);
+				this.moveStack(a, tempSlot);
+				this.moveStack(b, a);
+				this.moveStack(tempSlot, b);
+			}
 		}
 	}
 
@@ -71,13 +79,8 @@ public class ClientSortableContainer implements SortableContainer {
 	}
 
 	private void pickup(int slot) {
-		ClientPacketWorkQueue.INSTANCE.submit(new ClientPacketWorkQueue.PickupItemAction(this.menu, slot, this.getItem(slot).copy(), ItemStack.EMPTY));
+		ClientPacketWorkQueue.INSTANCE.submit(new ClientPacketWorkQueue.PickupItemAction(this.menu, slot, this.getItem(slot).copy()));
 		this.menu.getSlot(slot).set(ItemStack.EMPTY);
-	}
-
-	private void splitPickup(int slot, ItemStack pickup, ItemStack remainder) {
-		ClientPacketWorkQueue.INSTANCE.submit(new ClientPacketWorkQueue.PickupItemAction(this.menu, slot, pickup, remainder));
-		this.menu.getSlot(slot).set(remainder);
 	}
 
 	private void place(int slot, ItemStack item) {
@@ -85,9 +88,14 @@ public class ClientSortableContainer implements SortableContainer {
 		this.menu.getSlot(slot).set(item);
 	}
 
-	private void placeAndPickup(int slot, ItemStack carried) {
+	private void placeAndPickupItemInSlot(int slot, ItemStack carried) {
 		ClientPacketWorkQueue.INSTANCE.submit(new ClientPacketWorkQueue.PlaceItem(this.menu, slot, carried, this.getItem(slot).copy()));
 		this.menu.getSlot(slot).set(carried);
+	}
+
+	private void placeExpectingRemainder(int slot, ItemStack newSlotContents, ItemStack expectedRemainder) {
+		ClientPacketWorkQueue.INSTANCE.submit(new ClientPacketWorkQueue.PlaceItem(this.menu, slot, newSlotContents, expectedRemainder));
+		this.menu.getSlot(slot).set(newSlotContents);
 	}
 
 	private int findWorkingSlot(ItemStack workingItem, int... blacklist) {
