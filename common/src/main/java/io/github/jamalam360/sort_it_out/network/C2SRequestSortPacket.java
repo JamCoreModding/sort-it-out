@@ -12,9 +12,7 @@ public record C2SRequestSortPacket(int containerId, int slotIndex) implements Cu
 				buf.writeContainerId(packet.containerId());
 				buf.writeInt(packet.slotIndex());
 			},
-			(buf) -> {
-				return new C2SRequestSortPacket(buf.readContainerId(), buf.readInt());
-			}
+			(buf) -> new C2SRequestSortPacket(buf.readContainerId(), buf.readInt())
 	);
 
 	@Override

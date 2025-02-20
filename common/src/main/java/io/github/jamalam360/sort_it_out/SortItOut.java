@@ -1,28 +1,39 @@
 package io.github.jamalam360.sort_it_out;
 
 import io.github.jamalam360.jamlib.JamLib;
-import io.github.jamalam360.jamlib.config.ConfigManager;
 import io.github.jamalam360.sort_it_out.network.PacketHandlers;
-import io.github.jamalam360.sort_it_out.preference.UserPreferences;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.TreeMap;
-import java.util.UUID;
 
 public class SortItOut {
 	public static final String MOD_ID = "sort_it_out";
 	public static final String MOD_NAME = "Sort It Out!";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
-	private static final TreeMap<UUID, ConfigManager<UserPreferences>> PLAYER_PREFERENCES = new TreeMap<>();
 
 	public static void init() {
 		JamLib.checkForJarRenaming(SortItOut.class);
+		SortItOutCommands.register();
 		PacketHandlers.register();
 	}
 
 	public static ResourceLocation id(String path) {
 		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+	}
+
+	public static void playSortSound(Player player) {
+		float vol = 0.4f + (0.5f * player.level().random.nextFloat());
+		float pitch = 0.75f + (0.5f * player.level().random.nextFloat());
+
+		if (player instanceof ServerPlayer serverPlayer) {
+			serverPlayer.connection.send(new ClientboundSoundPacket(SoundEvents.UI_BUTTON_CLICK, SoundSource.BLOCKS, player.getX(), player.getY(), player.getZ(), vol, pitch, player.level().random.nextLong()));
+		} else {
+			player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), vol, pitch);
+		}
 	}
 }

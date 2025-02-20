@@ -18,7 +18,6 @@ public class UserPreferences {
 		Comparator<ItemStack> comparator = Comparators.EMPTINESS
 				.thenComparing(primaryComparator)
 				.thenComparing(Comparators.COUNT);
-
 		return this.invertSorting ? comparator.reversed() : comparator;
 	}
 

@@ -1,5 +1,10 @@
 {
-  "text.sort_it_out.sort_in_progress": "Sorting in progress; do not close this screen",
   "category.sort_it_out": "Sort It Out",
-  "key.sort_it_out.sort": "Sort Hovered Inventory"
+  "key.sort_it_out.sort": "Sort Hovered Inventory",
+  "text.sort_it_out.sort_in_progress": "Sorting in progress; do not close this screen",
+  "text.sort_it_out.sort": "Sort container",
+  "text.sort_it_out.command.invert_sorting": "Invert Sorting: %s",
+  "text.sort_it_out.command.sort_mode": "Sort Mode: %s",
+  "config.sort_it_out.client_preferences.sortMode.alphabetic": "Alphabetic",
+  "config.sort_it_out.client_preferences.sortMode.namespace": "By Namespace"
 }

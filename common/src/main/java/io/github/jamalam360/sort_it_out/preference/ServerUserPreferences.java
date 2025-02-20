@@ -18,14 +18,14 @@ public class ServerUserPreferences {
 	}
 
 	public UserPreferences getPlayerPreferences(Player player) {
-		if (this.clientSetUserPreferences != null) {
-			return this.clientSetUserPreferences.get();
-		}
-
 		return this.getPlayerConfigManager(player).get();
 	}
 
 	public ConfigManager<UserPreferences> getPlayerConfigManager(Player player) {
+		if (this.clientSetUserPreferences != null) {
+			return (ConfigManager<UserPreferences>) this.clientSetUserPreferences;
+		}
+
 		if (!this.configManagers.containsKey(player.getUUID())) {
 			this.configManagers.put(player.getUUID(), new ConfigManager<>(SortItOut.MOD_ID, player.getStringUUID(), UserPreferences.class));
 		}

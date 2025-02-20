@@ -13,6 +13,7 @@ import io.github.jamalam360.jamlib.config.ConfigManager;
 import io.github.jamalam360.jamlib.events.client.ClientPlayLifecycleEvents;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import io.github.jamalam360.sort_it_out.client.mixin.AbstractContainerScreenAccessor;
+import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import io.github.jamalam360.sort_it_out.network.C2SRequestSortPacket;
 import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
 import io.github.jamalam360.sort_it_out.sort.ContainerSorterUtil;
@@ -43,6 +44,13 @@ public class SortItOutClient {
 		ClientGuiEvent.RENDER_CONTAINER_FOREGROUND.register((SortItOutClient::renderContainerForeground));
 		ClientScreenInputEvent.KEY_RELEASED_PRE.register(SortItOutClient::keyReleased);
 
+		NetworkManager.registerReceiver(NetworkManager.Side.S2C, BidirectionalUserPreferencesUpdatePacket.S2C.TYPE, BidirectionalUserPreferencesUpdatePacket.S2C.STREAM_CODEC, (prefs, ctx) -> {
+			CONFIG.get().invertSorting = prefs.preferences().invertSorting;
+			CONFIG.get().sortMode = prefs.preferences().sortMode;
+			CONFIG.save();
+			SortItOut.LOGGER.info("Received updated preferences from server (via config-edit commands)");
+		});
+
 		if (Platform.isDevelopmentEnvironment()) {
 			ClientCommandRegistrationEvent.EVENT.register(((dispatcher, context) -> dispatcher.register(literal("sortitout").then(literal("toggle_force_client_sort").executes((ctx) -> {
 				isClientSortingForced = !isClientSortingForced;
@@ -57,7 +65,11 @@ public class SortItOutClient {
 			NetworkManager.sendToServer(new C2SRequestSortPacket(menu.containerId, slot.index));
 		} else if (!ClientPacketWorkQueue.INSTANCE.hasWorkRemaining()) {
 			ContainerSorterUtil.sortWithQuickSort(slot.container, new ClientSortableContainer(slot.container), CONFIG.get());
+		} else {
+			return;
 		}
+
+		SortItOut.playSortSound(Minecraft.getInstance().player);
 	}
 
 	private static void postLevelTick(ClientLevel level) {
