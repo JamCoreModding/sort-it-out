@@ -7,22 +7,39 @@ import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpda
 import io.github.jamalam360.sort_it_out.SortItOut;
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
 public class Config extends UserPreferences implements ConfigExtensions<Config> {
 	public int packetSendInterval = 3;
 
-	// TODO: replace this with a dedicated on save method in JamLib
+	@Override
+	public List<Link> getLinks() {
+		return List.of(
+				new Link(Link.DISCORD, "https://jamalam.tech/discord", Component.translatable("config.sort_it_out.discord")),
+				new Link(Link.GITHUB, "https://github.com/JamCoreModding/sort-it-out", Component.translatable("config.sort_it_out.github"))
+		);
+	}
+
 	@Override
 	public List<ValidationError> getValidationErrors(ConfigManager<Config> manager, FieldValidationInfo info) {
 		List<ValidationError> errors = ConfigExtensions.super.getValidationErrors(manager, info);
 
-		if (errors.isEmpty()) {
-			this.sync();
+		if (info.name().equals("comparators")) {
+			@SuppressWarnings("unchecked") List<SortingComparator> list = (List<SortingComparator>) info.value();
+
+			if (list.isEmpty()) {
+				errors.add(new ValidationError(ValidationError.Type.ERROR, info, Component.translatable("text.sort_it_out.command.comparators.empty_list")));
+			}
 		}
 
 		return errors;
+	}
+
+	@Override
+	public void afterSave() {
+		this.sync();
 	}
 
 	public void sync() {

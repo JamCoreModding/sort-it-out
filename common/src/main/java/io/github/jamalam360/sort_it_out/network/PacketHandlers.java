@@ -16,7 +16,7 @@ public class PacketHandlers {
 		NetworkManager.registerReceiver(NetworkManager.Side.C2S, BidirectionalUserPreferencesUpdatePacket.C2S.TYPE, BidirectionalUserPreferencesUpdatePacket.C2S.STREAM_CODEC, (prefs, ctx) -> {
 			ConfigManager<UserPreferences> configManager = ServerUserPreferences.INSTANCE.getPlayerConfigManager(ctx.getPlayer());
 			configManager.get().invertSorting = prefs.preferences().invertSorting;
-			configManager.get().sortMode = prefs.preferences().sortMode;
+			configManager.get().comparators = prefs.preferences().comparators;
 			configManager.save();
 			SortItOut.LOGGER.info("Received updated preferences from client");
 		});

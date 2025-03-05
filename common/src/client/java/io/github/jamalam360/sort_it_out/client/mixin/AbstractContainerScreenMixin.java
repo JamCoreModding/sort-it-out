@@ -7,6 +7,7 @@ import io.github.jamalam360.sort_it_out.client.gui.SortButton;
 import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -32,19 +33,20 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 
 	@Shadow @Final protected AbstractContainerMenu menu;
 
-	@Shadow protected int inventoryLabelY;
-
-	@Shadow protected int imageHeight;
-
 	protected AbstractContainerScreenMixin(Component title) {
 		super(title);
 	}
 
+	@SuppressWarnings("ConstantValue")
 	@Inject(
 			method = "init",
 			at = @At("TAIL")
 	)
 	private void sort_it_out$addSortButtons(CallbackInfo ci) {
+		if ((Screen) this instanceof CreativeModeInventoryScreen) {
+			return;
+		}
+
 		Slot mainContainer = null;
 		Slot invContainer = null;
 
@@ -78,7 +80,6 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 	)
 	private void sort_it_out$triggerSortOnMiddleClick(Slot slot, int slotId, int mouseButton, ClickType type, CallbackInfo ci) {
 		if (slot != null && !slot.hasItem() && mouseButton == 2 && !NetworkManager.canServerReceive(BidirectionalUserPreferencesUpdatePacket.C2S.TYPE)) {
-			System.out.println("client side");
 			if (ClientPacketWorkQueue.INSTANCE.hasWorkRemaining()) {
 				return;
 			}

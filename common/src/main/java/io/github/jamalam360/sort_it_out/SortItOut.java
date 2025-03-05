@@ -1,6 +1,7 @@
 package io.github.jamalam360.sort_it_out;
 
 import io.github.jamalam360.jamlib.JamLib;
+import io.github.jamalam360.sort_it_out.command.SortItOutCommands;
 import io.github.jamalam360.sort_it_out.network.PacketHandlers;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.resources.ResourceLocation;

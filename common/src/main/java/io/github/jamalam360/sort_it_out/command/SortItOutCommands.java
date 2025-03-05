@@ -1,36 +1,29 @@
-package io.github.jamalam360.sort_it_out;
+package io.github.jamalam360.sort_it_out.command;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import com.mojang.brigadier.suggestion.Suggestions;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.architectury.event.events.common.CommandRegistrationEvent;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.registries.DeferredRegister;
 import io.github.jamalam360.jamlib.config.ConfigManager;
+import io.github.jamalam360.sort_it_out.SortItOut;
 import io.github.jamalam360.sort_it_out.mixin.ArgumentTypeInfosAccessor;
 import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
-import java.util.Collection;
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.mojang.brigadier.arguments.BoolArgumentType.bool;
 import static net.minecraft.commands.Commands.argument;
@@ -40,10 +33,10 @@ public class SortItOutCommands {
 	private static final DeferredRegister<ArgumentTypeInfo<?, ?>> ARGUMENT_TYPES = DeferredRegister.create(SortItOut.MOD_ID, Registries.COMMAND_ARGUMENT_TYPE);
 
 	public static void register() {
-		SingletonArgumentInfo<SortModeArgumentType> info = SingletonArgumentInfo.contextFree(SortModeArgumentType::new);
-		ARGUMENT_TYPES.register(SortItOut.id("sort_mode"), () -> info);
+		SingletonArgumentInfo<SortingComparatorListArgumentType> info = SingletonArgumentInfo.contextFree(SortingComparatorListArgumentType::new);
+		ARGUMENT_TYPES.register(SortItOut.id("sorting_comparator"), () -> info);
 		ARGUMENT_TYPES.register();
-		ArgumentTypeInfosAccessor.getByClass().put(SortModeArgumentType.class, info);
+		ArgumentTypeInfosAccessor.getByClass().put(SortingComparatorListArgumentType.class, info);
 		CommandRegistrationEvent.EVENT.register(SortItOutCommands::registerCommands);
 	}
 
@@ -57,11 +50,11 @@ public class SortItOutCommands {
 												.executes(SortItOutCommands::setInvertSorting)
 										)
 								)
-								.then(literal("sortMode")
-										.executes(SortItOutCommands::echoSortMode)
-										.then(argument("value", new SortModeArgumentType())
-												.executes(SortItOutCommands::setSortMode)
-										)
+								.then(literal("comparators")
+										.executes(SortItOutCommands::echoComparators)
+										.then(RequiredArgumentBuilder.<CommandSourceStack, List<UserPreferences.SortingComparator>>argument("comparators", new SortingComparatorListArgumentType())
+												.executes(SortItOutCommands::setComparators))
+
 								)
 						)
 		);
@@ -74,7 +67,6 @@ public class SortItOutCommands {
 	private static void modifyConfig(CommandContext<CommandSourceStack> ctx, Consumer<UserPreferences> modifier) {
 		ConfigManager<UserPreferences> manager = ServerUserPreferences.INSTANCE.getPlayerConfigManager(ctx.getSource().getPlayer());
 		modifier.accept(manager.get());
-		System.out.println("Updated config: " + manager.get().sortMode);
 		manager.save();
 
 		if (NetworkManager.canPlayerReceive(ctx.getSource().getPlayer(), BidirectionalUserPreferencesUpdatePacket.S2C.TYPE)) {
@@ -89,43 +81,39 @@ public class SortItOutCommands {
 
 	private static int setInvertSorting(CommandContext<CommandSourceStack> ctx) {
 		modifyConfig(ctx, (prefs) -> prefs.invertSorting = BoolArgumentType.getBool(ctx, "value"));
-		ctx.getSource().sendSuccess(() -> Component.translatable("text.sort_it_out.command.invert_sorting", getPlayerPrefs(ctx).invertSorting ? Component.literal("Yes") : Component.literal("No")), false);
+		ctx.getSource().sendSuccess(() -> Component.translatable("text.sort_it_out.command.comparators", getPlayerPrefs(ctx).comparators.stream().map(Enum::name).collect(Collectors.joining(", "))), false);
 		return 0;
 	}
 
-	private static int echoSortMode(CommandContext<CommandSourceStack> ctx) {
-		ctx.getSource().sendSuccess(() -> Component.translatable("text.sort_it_out.command.sort_mode", Component.translatable("config.sort_it_out.client_preferences.sortMode." + getPlayerPrefs(ctx).sortMode.name().toLowerCase())), false);
+	private static int echoComparators(CommandContext<CommandSourceStack> ctx) {
+		ctx.getSource().sendSuccess(() -> Component.translatable("text.sort_it_out.command.comparators", formatComparators(getPlayerPrefs(ctx).comparators)), false);
 		return 0;
 	}
 
-	private static int setSortMode(CommandContext<CommandSourceStack> ctx) {
-		System.out.println("doesn;t seem to work proeprly");
-		System.out.println(ctx.getArgument("value", UserPreferences.SortMode.class));
-		modifyConfig(ctx, (prefs) -> prefs.sortMode = ctx.getArgument("value", UserPreferences.SortMode.class));
-		System.out.println(getPlayerPrefs(ctx).sortMode);
-		ctx.getSource().sendSuccess(() -> Component.translatable("text.sort_it_out.command.sort_mode", Component.translatable("config.sort_it_out.client_preferences.sortMode." + getPlayerPrefs(ctx).sortMode.name().toLowerCase())), false);
+	@SuppressWarnings("unchecked")
+	private static int setComparators(CommandContext<CommandSourceStack> ctx) {
+		List<UserPreferences.SortingComparator> args = ctx.getArgument("comparators", List.class);
+
+		if (args.isEmpty()) {
+			ctx.getSource().sendFailure(Component.translatable("text.sort_it_out.command.comparators.empty_list"));
+		}
+
+		modifyConfig(ctx, (prefs) -> prefs.comparators = args);
+		ctx.getSource().sendSuccess(() -> Component.translatable("text.sort_it_out.command.comparators", formatComparators(getPlayerPrefs(ctx).comparators)), false);
 		return 0;
 	}
 
-	private static class SortModeArgumentType implements ArgumentType<UserPreferences.SortMode> {
-		@Override
-		public UserPreferences.SortMode parse(final StringReader reader) throws CommandSyntaxException {
-			String name = reader.readUnquotedString();
-			try {
-				return UserPreferences.SortMode.valueOf(name);
-			} catch (IllegalArgumentException e) {
-				throw new SimpleCommandExceptionType(() -> "Unknown sort mode provided").create();
-			}
+	private static Component formatComparators(List<UserPreferences.SortingComparator> comparators) {
+		MutableComponent result = createComparatorComponent(comparators.getFirst());
+
+		for (int i = 1; i < comparators.size(); i++) {
+			result = result.append(", ").append(createComparatorComponent(comparators.get(i)));
 		}
 
-		@Override
-		public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
-			return SharedSuggestionProvider.suggest(Stream.of(UserPreferences.SortMode.values()).map(Enum::name), builder);
-		}
+		return result;
+	}
 
-		@Override
-		public Collection<String> getExamples() {
-			return Stream.of(UserPreferences.SortMode.values()).map(Enum::name).collect(Collectors.toList());
-		}
+	private static MutableComponent createComparatorComponent(UserPreferences.SortingComparator comparator) {
+		return Component.translatable("config.sort_it_out.client_preferences.comparators." + comparator.name().toLowerCase());
 	}
 }

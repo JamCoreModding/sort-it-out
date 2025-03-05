@@ -1,15 +1,10 @@
 package io.github.jamalam360.sort_it_out.mixin;
 
 import io.github.jamalam360.sort_it_out.SortItOut;
-import io.github.jamalam360.sort_it_out.SortItOutCommands;
 import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
 import io.github.jamalam360.sort_it_out.sort.ContainerSorterUtil;
-import io.github.jamalam360.sort_it_out.sort.QuickSortContainerSorter;
 import io.github.jamalam360.sort_it_out.sort.ServerSortableContainer;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.protocol.game.ClientboundSoundPacket;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;

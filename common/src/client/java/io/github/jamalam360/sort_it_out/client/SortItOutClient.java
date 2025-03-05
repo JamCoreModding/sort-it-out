@@ -46,7 +46,7 @@ public class SortItOutClient {
 
 		NetworkManager.registerReceiver(NetworkManager.Side.S2C, BidirectionalUserPreferencesUpdatePacket.S2C.TYPE, BidirectionalUserPreferencesUpdatePacket.S2C.STREAM_CODEC, (prefs, ctx) -> {
 			CONFIG.get().invertSorting = prefs.preferences().invertSorting;
-			CONFIG.get().sortMode = prefs.preferences().sortMode;
+			CONFIG.get().comparators = prefs.preferences().comparators;
 			CONFIG.save();
 			SortItOut.LOGGER.info("Received updated preferences from server (via config-edit commands)");
 		});
