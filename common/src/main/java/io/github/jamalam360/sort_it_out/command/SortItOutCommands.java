@@ -127,6 +127,13 @@ public class SortItOutCommands {
 			return Component.translatable(key, args);
 		} else {
 			String lang = ctx.getSource().getPlayer() == null ? "en_us" : ctx.getSource().getPlayer().clientInformation().language();
+
+			for (int i = 0; i < args.length; i++) {
+				if (args[i] instanceof Component component) {
+					args[i] = component.getString();
+				}
+			}
+
 			return Component.literal(String.format(ServerTranslationsHelper.getTranslation(lang, key), args));
 		}
 	}
