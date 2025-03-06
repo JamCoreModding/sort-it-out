@@ -69,24 +69,24 @@ public class SortItOutCommands {
 		modifier.accept(manager.get());
 		manager.save();
 
-		if (NetworkManager.canPlayerReceive(ctx.getSource().getPlayer(), BidirectionalUserPreferencesUpdatePacket.S2C.TYPE)) {
+		if (ctx.getSource().getPlayer() != null && NetworkManager.canPlayerReceive(ctx.getSource().getPlayer(), BidirectionalUserPreferencesUpdatePacket.S2C.TYPE)) {
 			NetworkManager.sendToPlayer(ctx.getSource().getPlayer(), new BidirectionalUserPreferencesUpdatePacket.S2C(manager.get()));
 		}
 	}
 
 	private static int echoInvertSorting(CommandContext<CommandSourceStack> ctx) {
-		ctx.getSource().sendSuccess(() -> Component.translatable("text.sort_it_out.command.invert_sorting", getPlayerPrefs(ctx).invertSorting ? Component.literal("Yes") : Component.literal("No")), false);
+		ctx.getSource().sendSuccess(() -> translatable(ctx, "text.sort_it_out.command.invert_sorting", getPlayerPrefs(ctx).invertSorting ? Component.literal("Yes") : Component.literal("No")), false);
 		return Command.SINGLE_SUCCESS;
 	}
 
 	private static int setInvertSorting(CommandContext<CommandSourceStack> ctx) {
 		modifyConfig(ctx, (prefs) -> prefs.invertSorting = BoolArgumentType.getBool(ctx, "value"));
-		ctx.getSource().sendSuccess(() -> Component.translatable("text.sort_it_out.command.invert_sorting", getPlayerPrefs(ctx).invertSorting ? Component.literal("Yes") : Component.literal("No")), false);
+		ctx.getSource().sendSuccess(() -> translatable(ctx, "text.sort_it_out.command.invert_sorting", getPlayerPrefs(ctx).invertSorting ? Component.literal("Yes") : Component.literal("No")), false);
 		return Command.SINGLE_SUCCESS;
 	}
 
 	private static int echoComparators(CommandContext<CommandSourceStack> ctx) {
-		ctx.getSource().sendSuccess(() -> Component.translatable("text.sort_it_out.command.comparators", formatComparators(getPlayerPrefs(ctx).comparators)), false);
+		ctx.getSource().sendSuccess(() -> translatable(ctx, "text.sort_it_out.command.comparators", formatComparators(ctx, getPlayerPrefs(ctx).comparators)), false);
 		return Command.SINGLE_SUCCESS;
 	}
 
@@ -97,29 +97,37 @@ public class SortItOutCommands {
 			String value = ctx.getArgument("comparator" + i, String.class);
 
 			try {
-				// TODO: we can't use translatable text in commands
 				comparators.add(UserPreferences.SortingComparator.valueOf(value));
 			} catch (IllegalArgumentException e) {
-				ctx.getSource().sendFailure(Component.translatable("text.sort_it_out.command.unknown_comparator", value, formatComparators(Arrays.stream(UserPreferences.SortingComparator.values()).toList())));
+				ctx.getSource().sendFailure(translatable(ctx, "text.sort_it_out.command.unknown_comparator", value, formatComparators(ctx, Arrays.stream(UserPreferences.SortingComparator.values()).toList())));
 			}
 		}
 
 		modifyConfig(ctx, (prefs) -> prefs.comparators = comparators);
-		ctx.getSource().sendSuccess(() -> Component.translatable("text.sort_it_out.command.comparators", formatComparators(getPlayerPrefs(ctx).comparators)), false);
+		ctx.getSource().sendSuccess(() -> translatable(ctx, "text.sort_it_out.command.comparators", formatComparators(ctx, getPlayerPrefs(ctx).comparators)), false);
 		return Command.SINGLE_SUCCESS;
 	}
 
-	private static Component formatComparators(List<UserPreferences.SortingComparator> comparators) {
-		MutableComponent result = createComparatorComponent(comparators.getFirst());
+	private static Component formatComparators(CommandContext<CommandSourceStack> ctx, List<UserPreferences.SortingComparator> comparators) {
+		MutableComponent result = createComparatorComponent(ctx, comparators.getFirst());
 
 		for (int i = 1; i < comparators.size(); i++) {
-			result = result.append(", ").append(createComparatorComponent(comparators.get(i)));
+			result = result.append(", ").append(createComparatorComponent(ctx, comparators.get(i)));
 		}
 
 		return result;
 	}
 
-	private static MutableComponent createComparatorComponent(UserPreferences.SortingComparator comparator) {
-		return Component.translatable("config.sort_it_out.client_preferences.comparators." + comparator.name().toLowerCase());
+	private static MutableComponent createComparatorComponent(CommandContext<CommandSourceStack> ctx, UserPreferences.SortingComparator comparator) {
+		return translatable(ctx, "config.sort_it_out.client_preferences.comparators." + comparator.name().toLowerCase());
+	}
+
+	private static MutableComponent translatable(CommandContext<CommandSourceStack> ctx, String key, Object... args) {
+		if (NetworkManager.canPlayerReceive(ctx.getSource().getPlayer(), BidirectionalUserPreferencesUpdatePacket.S2C.TYPE)) {
+			return Component.translatable(key, args);
+		} else {
+			String lang = ctx.getSource().getPlayer() == null ? "en_us" : ctx.getSource().getPlayer().clientInformation().language();
+			return Component.literal(String.format(ServerTranslationsHelper.getTranslation(lang, key), args));
+		}
 	}
 }

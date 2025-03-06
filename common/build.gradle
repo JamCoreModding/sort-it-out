@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 architectury {
     common(rootProject.enabled_platforms.split(","))
 }
@@ -17,4 +19,35 @@ dependencies {
     modImplementation libs.fabric.loader
     modImplementation libs.architectury.common
     modImplementation libs.jamlib.common
+}
+
+tasks.processResources.dependsOn("updateServerTranslationsHelper")
+tasks.register("updateServerTranslationsHelper") {
+    def langDir = project.file("src/main/resources/assets/sort_it_out/lang")
+    def outputFile = project.file("src/main/java/io/github/jamalam360/sort_it_out/command/ServerTranslationsHelper.java")
+    def output = []
+
+    doLast {
+        if (langDir.exists() && langDir.isDirectory()) {
+            langDir.listFiles((FilenameFilter) { dir, name -> name.endsWith(".json") }).each { jsonFile ->
+                try {
+                    new JsonSlurper().parse(jsonFile).entrySet().forEach {
+                        output += "\t\tLANGUAGES.computeIfAbsent(\"${jsonFile.name.split(".json")[0]}\", (ignored) -> new HashMap<>()).put(\"${it.key}\", \"${it.value}\");"
+                    }
+                } catch (Exception e) {
+                    println "Error processing ${jsonFile.name}: ${e.message}"
+                }
+            }
+        } else {
+            println "Warning: Language directory not found"
+        }
+
+        def lines = outputFile.readLines()
+        def startIndex = lines.stream().findIndexOf { it.contains("gradle-auto-populated") }
+        def endIndex = lines.stream().findLastIndexOf { it.contains("gradle-auto-populated") }
+        lines.subList(startIndex + 1, endIndex).clear()
+        lines.addAll(startIndex + 1, output)
+        outputFile.write(lines.join("\n"))
+        println "Language values written to: ${outputFile.absolutePath}"
+    }
 }
