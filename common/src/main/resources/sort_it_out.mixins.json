@@ -4,8 +4,7 @@
   "package": "io.github.jamalam360.sort_it_out.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "AbstractContainerMenuMixin",
-    "ArgumentTypeInfosAccessor"
+    "AbstractContainerMenuMixin"
   ],
   "client": [
   ],

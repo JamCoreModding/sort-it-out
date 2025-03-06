@@ -1,46 +1,40 @@
 package io.github.jamalam360.sort_it_out.command;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import dev.architectury.event.events.common.CommandRegistrationEvent;
 import dev.architectury.networking.NetworkManager;
-import dev.architectury.registry.registries.DeferredRegister;
 import io.github.jamalam360.jamlib.config.ConfigManager;
-import io.github.jamalam360.sort_it_out.SortItOut;
-import io.github.jamalam360.sort_it_out.mixin.ArgumentTypeInfosAccessor;
 import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.synchronization.ArgumentTypeInfo;
-import net.minecraft.commands.synchronization.SingletonArgumentInfo;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.mojang.brigadier.arguments.BoolArgumentType.bool;
 import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
 
 public class SortItOutCommands {
-	private static final DeferredRegister<ArgumentTypeInfo<?, ?>> ARGUMENT_TYPES = DeferredRegister.create(SortItOut.MOD_ID, Registries.COMMAND_ARGUMENT_TYPE);
-
 	public static void register() {
-		SingletonArgumentInfo<SortingComparatorListArgumentType> info = SingletonArgumentInfo.contextFree(SortingComparatorListArgumentType::new);
-		ARGUMENT_TYPES.register(SortItOut.id("sorting_comparator"), () -> info);
-		ARGUMENT_TYPES.register();
-		ArgumentTypeInfosAccessor.getByClass().put(SortingComparatorListArgumentType.class, info);
 		CommandRegistrationEvent.EVENT.register(SortItOutCommands::registerCommands);
 	}
 
-	private static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext register, net.minecraft.commands.Commands.CommandSelection selection) {
+	private static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext register, Commands.CommandSelection selection) {
 		dispatcher.register(
 				literal("sortitout")
 						.then(literal("preferences")
@@ -52,12 +46,18 @@ public class SortItOutCommands {
 								)
 								.then(literal("comparators")
 										.executes(SortItOutCommands::echoComparators)
-										.then(RequiredArgumentBuilder.<CommandSourceStack, List<UserPreferences.SortingComparator>>argument("comparators", new SortingComparatorListArgumentType())
-												.executes(SortItOutCommands::setComparators))
-
+										.then(
+												sortingComparator(0).then(sortingComparator(1).then(sortingComparator(2).then(sortingComparator(3))))
+										)
 								)
 						)
 		);
+	}
+
+	private static RequiredArgumentBuilder<CommandSourceStack, String> sortingComparator(int index) {
+		return argument("comparator" + index, StringArgumentType.string())
+				.suggests((ctx, builder) -> SharedSuggestionProvider.suggest(Stream.of(UserPreferences.SortingComparator.values()).map(Enum::name), builder))
+				.executes(ctx -> setComparators(ctx, index + 1));
 	}
 
 	private static UserPreferences getPlayerPrefs(CommandContext<CommandSourceStack> ctx) {
@@ -76,31 +76,37 @@ public class SortItOutCommands {
 
 	private static int echoInvertSorting(CommandContext<CommandSourceStack> ctx) {
 		ctx.getSource().sendSuccess(() -> Component.translatable("text.sort_it_out.command.invert_sorting", getPlayerPrefs(ctx).invertSorting ? Component.literal("Yes") : Component.literal("No")), false);
-		return 0;
+		return Command.SINGLE_SUCCESS;
 	}
 
 	private static int setInvertSorting(CommandContext<CommandSourceStack> ctx) {
 		modifyConfig(ctx, (prefs) -> prefs.invertSorting = BoolArgumentType.getBool(ctx, "value"));
-		ctx.getSource().sendSuccess(() -> Component.translatable("text.sort_it_out.command.comparators", getPlayerPrefs(ctx).comparators.stream().map(Enum::name).collect(Collectors.joining(", "))), false);
-		return 0;
+		ctx.getSource().sendSuccess(() -> Component.translatable("text.sort_it_out.command.invert_sorting", getPlayerPrefs(ctx).invertSorting ? Component.literal("Yes") : Component.literal("No")), false);
+		return Command.SINGLE_SUCCESS;
 	}
 
 	private static int echoComparators(CommandContext<CommandSourceStack> ctx) {
 		ctx.getSource().sendSuccess(() -> Component.translatable("text.sort_it_out.command.comparators", formatComparators(getPlayerPrefs(ctx).comparators)), false);
-		return 0;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	@SuppressWarnings("unchecked")
-	private static int setComparators(CommandContext<CommandSourceStack> ctx) {
-		List<UserPreferences.SortingComparator> args = ctx.getArgument("comparators", List.class);
+	private static int setComparators(CommandContext<CommandSourceStack> ctx, int cardinality) {
+		List<UserPreferences.SortingComparator> comparators = new ArrayList<>();
 
-		if (args.isEmpty()) {
-			ctx.getSource().sendFailure(Component.translatable("text.sort_it_out.command.comparators.empty_list"));
+		for (int i = 0; i < cardinality; i++) {
+			String value = ctx.getArgument("comparator" + i, String.class);
+
+			try {
+				// TODO: we can't use translatable text in commands
+				comparators.add(UserPreferences.SortingComparator.valueOf(value));
+			} catch (IllegalArgumentException e) {
+				ctx.getSource().sendFailure(Component.translatable("text.sort_it_out.command.unknown_comparator", value, formatComparators(Arrays.stream(UserPreferences.SortingComparator.values()).toList())));
+			}
 		}
 
-		modifyConfig(ctx, (prefs) -> prefs.comparators = args);
+		modifyConfig(ctx, (prefs) -> prefs.comparators = comparators);
 		ctx.getSource().sendSuccess(() -> Component.translatable("text.sort_it_out.command.comparators", formatComparators(getPlayerPrefs(ctx).comparators)), false);
-		return 0;
+		return Command.SINGLE_SUCCESS;
 	}
 
 	private static Component formatComparators(List<UserPreferences.SortingComparator> comparators) {

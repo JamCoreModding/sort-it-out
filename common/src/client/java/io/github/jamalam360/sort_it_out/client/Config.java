@@ -30,7 +30,7 @@ public class Config extends UserPreferences implements ConfigExtensions<Config> 
 			@SuppressWarnings("unchecked") List<SortingComparator> list = (List<SortingComparator>) info.value();
 
 			if (list.isEmpty()) {
-				errors.add(new ValidationError(ValidationError.Type.ERROR, info, Component.translatable("text.sort_it_out.command.comparators.empty_list")));
+				errors.add(new ValidationError(ValidationError.Type.ERROR, info, Component.translatable("config.sort_it_out.client_preferences.comparators.empty_list")));
 			}
 		}
 

@@ -7,8 +7,6 @@ import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
 import io.github.jamalam360.sort_it_out.sort.ContainerSorterUtil;
 import io.github.jamalam360.sort_it_out.sort.ServerSortableContainer;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.Container;
 
 public class PacketHandlers {

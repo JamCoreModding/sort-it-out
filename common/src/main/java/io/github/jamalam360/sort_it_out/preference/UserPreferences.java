@@ -32,6 +32,7 @@ public class UserPreferences {
 		return this.invertSorting ? comparator.reversed() : comparator;
 	}
 
+	// When adding a new comparator, ensure that the command chain is long enough in {@link SortItOutCommands}
 	public enum SortingComparator {
 		DISPLAY_NAME,
 		NAMESPACE,

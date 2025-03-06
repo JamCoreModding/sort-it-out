@@ -52,7 +52,7 @@ public class SortItOutClient {
 		});
 
 		if (Platform.isDevelopmentEnvironment()) {
-			ClientCommandRegistrationEvent.EVENT.register(((dispatcher, context) -> dispatcher.register(literal("sortitout").then(literal("toggle_force_client_sort").executes((ctx) -> {
+			ClientCommandRegistrationEvent.EVENT.register(((dispatcher, context) -> dispatcher.register(literal("sortitoutc").then(literal("toggle_force_client_sort").executes((ctx) -> {
 				isClientSortingForced = !isClientSortingForced;
 				ctx.getSource().arch$sendSuccess(() -> Component.literal("Client Sorting Forced: " + isClientSortingForced), false);
 				return 0;
