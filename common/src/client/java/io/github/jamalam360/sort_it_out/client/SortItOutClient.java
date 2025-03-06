@@ -7,11 +7,12 @@ import dev.architectury.event.events.client.ClientGuiEvent;
 import dev.architectury.event.events.client.ClientScreenInputEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.networking.NetworkManager;
-import dev.architectury.platform.Platform;
+import dev.architectury.registry.ReloadListenerRegistry;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import io.github.jamalam360.jamlib.config.ConfigManager;
 import io.github.jamalam360.jamlib.events.client.ClientPlayLifecycleEvents;
 import io.github.jamalam360.sort_it_out.SortItOut;
+import io.github.jamalam360.sort_it_out.client.button.ScreenSortButtonsLoader;
 import io.github.jamalam360.sort_it_out.client.mixin.AbstractContainerScreenAccessor;
 import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import io.github.jamalam360.sort_it_out.network.C2SRequestSortPacket;
@@ -25,6 +26,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import org.lwjgl.glfw.GLFW;
@@ -35,14 +37,16 @@ public class SortItOutClient {
 	public static final ConfigManager<Config> CONFIG = new ConfigManager<>(SortItOut.MOD_ID, "client_preferences", Config.class);
 	private static final KeyMapping SORT_KEY_BINDING = new KeyMapping("key.sort_it_out.sort", GLFW.GLFW_KEY_I, "category.sort_it_out");
 	private static boolean isClientSortingForced = false;
+	private static boolean isSlotIndexOverlayEnabled = false;
 
 	public static void init() {
 		ServerUserPreferences.INSTANCE.setClientUserPreferences(CONFIG);
 		KeyMappingRegistry.register(SORT_KEY_BINDING);
+		ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, ScreenSortButtonsLoader.INSTANCE);
 		ClientTickEvent.CLIENT_LEVEL_POST.register(SortItOutClient::postLevelTick);
 		ClientPlayLifecycleEvents.JOIN.register((mc) -> CONFIG.get().sync());
-		ClientGuiEvent.RENDER_CONTAINER_FOREGROUND.register((SortItOutClient::renderContainerForeground));
 		ClientScreenInputEvent.KEY_RELEASED_PRE.register(SortItOutClient::keyReleased);
+		ClientGuiEvent.RENDER_CONTAINER_FOREGROUND.register(SortItOutClient::renderContainerForeground);
 
 		NetworkManager.registerReceiver(NetworkManager.Side.S2C, BidirectionalUserPreferencesUpdatePacket.S2C.TYPE, BidirectionalUserPreferencesUpdatePacket.S2C.STREAM_CODEC, (prefs, ctx) -> {
 			CONFIG.get().invertSorting = prefs.preferences().invertSorting;
@@ -51,13 +55,23 @@ public class SortItOutClient {
 			SortItOut.LOGGER.info("Received updated preferences from server (via config-edit commands)");
 		});
 
-		if (Platform.isDevelopmentEnvironment()) {
-			ClientCommandRegistrationEvent.EVENT.register(((dispatcher, context) -> dispatcher.register(literal("sortitoutc").then(literal("toggle_force_client_sort").executes((ctx) -> {
-				isClientSortingForced = !isClientSortingForced;
-				ctx.getSource().arch$sendSuccess(() -> Component.literal("Client Sorting Forced: " + isClientSortingForced), false);
-				return 0;
-			})))));
-		}
+		ClientCommandRegistrationEvent.EVENT.register(((dispatcher, context) -> dispatcher.register(
+				literal("sortitoutc")
+						.then(literal("toggle_force_client_sort")
+								.executes((ctx) -> {
+									isClientSortingForced = !isClientSortingForced;
+									ctx.getSource().arch$sendSuccess(() -> Component.literal("Client Sorting Forced: " + isClientSortingForced), false);
+									return 0;
+								})
+						)
+						.then(literal("toggle_slot_index_debug_renderer")
+								.executes((ctx) -> {
+									isSlotIndexOverlayEnabled = !isSlotIndexOverlayEnabled;
+									ctx.getSource().arch$sendSuccess(() -> Component.literal("Slot Index Debug Overlay: " + isSlotIndexOverlayEnabled), false);
+									return 0;
+								})
+						)
+		)));
 	}
 
 	public static void sortOnEitherSide(AbstractContainerMenu menu, Slot slot) {
@@ -96,6 +110,12 @@ public class SortItOutClient {
 			graphics.pose().translate(0, -((AbstractContainerScreenAccessor) screen).getTopPos(), 0);
 			graphics.drawCenteredString(font, component, ((AbstractContainerScreenAccessor) screen).getImageWidth() / 2, 6, 0xFFFFFF);
 			graphics.pose().popPose();
+		}
+
+		if (isSlotIndexOverlayEnabled) {
+			for (Slot slot : screen.getMenu().slots) {
+				graphics.drawString(Minecraft.getInstance().font, "" + slot.index, slot.x, slot.y, 0xFFFFFF);
+			}
 		}
 	}
 

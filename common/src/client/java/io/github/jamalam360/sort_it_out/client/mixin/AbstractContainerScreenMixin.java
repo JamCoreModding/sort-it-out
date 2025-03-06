@@ -3,13 +3,14 @@ package io.github.jamalam360.sort_it_out.client.mixin;
 import dev.architectury.networking.NetworkManager;
 import io.github.jamalam360.sort_it_out.client.ClientPacketWorkQueue;
 import io.github.jamalam360.sort_it_out.client.SortItOutClient;
+import io.github.jamalam360.sort_it_out.client.button.ScreenSortButton;
+import io.github.jamalam360.sort_it_out.client.button.ScreenSortButtonsLoader;
 import io.github.jamalam360.sort_it_out.client.gui.SortButton;
 import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
@@ -19,6 +20,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 @Mixin(AbstractContainerScreen.class)
 public abstract class AbstractContainerScreenMixin extends Screen {
@@ -47,30 +50,37 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 			return;
 		}
 
-		Slot mainContainer = null;
-		Slot invContainer = null;
-
-		for (Slot slot : this.menu.slots) {
-			if (slot.container instanceof Inventory) {
-				invContainer = slot;
-			} else if (mainContainer == null) {
-				mainContainer = slot;
-			}
-
-			if (mainContainer != null && invContainer != null) {
-				break;
+		List<ScreenSortButton> customButtons = ScreenSortButtonsLoader.INSTANCE.getCustomButtonsForScreen((AbstractContainerScreen<?>) (Object) this);
+		if (customButtons != null) {
+			for (ScreenSortButton button : customButtons) {
+				this.addRenderableWidget(new SortButton(this.leftPos + button.xOffset(), this.topPos + button.yOffset(), this.menu, this.menu.slots.get(button.slotStartIndex())));
 			}
 		}
 
-		int x = (this.leftPos + this.imageWidth) - 19;
-
-		if (mainContainer != null) {
-			this.addRenderableWidget(new SortButton(x, this.topPos + 5, this.menu, mainContainer));
-		}
-
-		if (invContainer != null) {
-			this.addRenderableWidget(new SortButton(x, this.topPos + 72, this.menu, invContainer));
-		}
+//		Slot mainContainer = null;
+//		Slot invContainer = null;
+//
+//		for (Slot slot : this.menu.slots) {
+//			if (slot.container instanceof Inventory) {
+//				invContainer = slot;
+//			} else if (mainContainer == null) {
+//				mainContainer = slot;
+//			}
+//
+//			if (mainContainer != null && invContainer != null) {
+//				break;
+//			}
+//		}
+//
+//		int x = (this.leftPos + this.imageWidth) - 19;
+//
+//		if (mainContainer != null) {
+//			this.addRenderableWidget(new SortButton(x, this.topPos + 5, this.menu, mainContainer));
+//		}
+//
+//		if (invContainer != null) {
+//			this.addRenderableWidget(new SortButton(x, this.topPos + 72, this.menu, invContainer));
+//		}
 	}
 
 	@Inject(
