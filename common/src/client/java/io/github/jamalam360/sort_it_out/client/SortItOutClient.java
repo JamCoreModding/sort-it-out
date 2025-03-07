@@ -44,7 +44,7 @@ public class SortItOutClient {
 	public static void init() {
 		ServerUserPreferences.INSTANCE.setClientUserPreferences(CONFIG);
 		KeyMappingRegistry.register(SORT_KEY_BINDING);
-		ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, ScreenSortButtonsLoader.INSTANCE);
+		ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, ScreenSortButtonsLoader.INSTANCE, SortItOut.id("sort_button_reloader"));
 		ClientTickEvent.CLIENT_LEVEL_POST.register(SortItOutClient::postLevelTick);
 		ClientPlayLifecycleEvents.JOIN.register((mc) -> CONFIG.get().sync());
 		ClientScreenInputEvent.KEY_RELEASED_PRE.register(SortItOutClient::keyReleased);
