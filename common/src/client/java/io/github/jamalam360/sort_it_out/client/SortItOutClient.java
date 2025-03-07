@@ -25,6 +25,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -78,7 +79,7 @@ public class SortItOutClient {
 		if (NetworkManager.canServerReceive(C2SRequestSortPacket.TYPE) && !isClientSortingForced) {
 			NetworkManager.sendToServer(new C2SRequestSortPacket(menu.containerId, slot.index));
 		} else if (!ClientPacketWorkQueue.INSTANCE.hasWorkRemaining()) {
-			ContainerSorterUtil.sortWithQuickSort(slot.container, new ClientSortableContainer(slot.container), CONFIG.get());
+			ContainerSorterUtil.sortWithSelectionSort(slot.container, new ClientSortableContainer(slot.container), CONFIG.get());
 		} else {
 			return;
 		}
@@ -113,6 +114,8 @@ public class SortItOutClient {
 		}
 
 		if (isSlotIndexOverlayEnabled) {
+			graphics.drawCenteredString(Minecraft.getInstance().font, "" + BuiltInRegistries.MENU.getKey(screen.getMenu().getType()), Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2, 5, 0xFFFFFF);
+
 			for (Slot slot : screen.getMenu().slots) {
 				graphics.drawString(Minecraft.getInstance().font, "" + slot.index, slot.x, slot.y, 0xFFFFFF);
 			}

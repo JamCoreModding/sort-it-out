@@ -13,14 +13,7 @@ public class QuickSortContainerSorter implements ContainerSorter {
 
 	@Override
 	public void sort(SortableContainer container, int startIndex, int containerSize, UserPreferences preferences) {
-		for (int i = startIndex; i < startIndex + containerSize; i++) {
-			for (int j = startIndex; j < startIndex + containerSize; j++) {
-				if (i != j && ContainerSorterUtil.canMerge(container.getItem(i), container.getItem(j))) {
-					container.mergeStacks(i, j);
-				}
-			}
-		}
-
+		this.mergeStacks(container, startIndex, containerSize);
 		quickSort(container, startIndex, startIndex + containerSize - 1, preferences.createComparator());
 	}
 

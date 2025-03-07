@@ -9,6 +9,14 @@ import java.util.Comparator;
 import java.util.function.Function;
 
 public class ContainerSorterUtil {
+	public static void sortWithSelectionSort(Container container, SortableContainer sortableContainer, UserPreferences preferences) {
+		if (container instanceof Inventory) {
+			SelectionSortContainerSorter.INSTANCE.sort(sortableContainer, 9, 27, preferences);
+		} else {
+			SelectionSortContainerSorter.INSTANCE.sort(sortableContainer, preferences);
+		}
+	}
+
 	public static void sortWithQuickSort(Container container, SortableContainer sortableContainer, UserPreferences preferences) {
 		if (container instanceof Inventory) {
 			QuickSortContainerSorter.INSTANCE.sort(sortableContainer, 9, 27, preferences);
