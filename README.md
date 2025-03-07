@@ -1,20 +1,55 @@
-# JamCore Multi-loader Template Mod (Fabric + Neoforge, with Architectury)
+![Sort It Out!: A capable inventory sorting mod that works either client-side or server-side](https://cdn.jamalam.tech/mod-assets/sort-it-out-banner.png)
 
-This repository uses a system I created called
-[easytemplate](https://github.com/Jamalam360/easytemplate) to initialize the
-template automatically. After following the easytemplate prompt, you shouldn't
-have to make any changes before starting programming.
+<div align="center">
 
-1. Install [Deno](https://deno.land/)
-2. Click `Use This Template`
-3. Clone the repository.
-4. Run
-   `deno run --allow-read --allow-write --allow-env https://raw.githubusercontent.com/Jamalam360/easytemplate/main/easytemplate.ts`
-   in the repository directory.
-5. Follow the instructions.
-6. See [the docs](https://docs.jamalam.tech) for more information.
+[Report Issues](https://github.com/JamCoreModding/sort-it-out) • [Chat on Discord](https://discord.jamalam.tech) • [CurseForge](https://curseforge.com/minecraft/mc-mods/sort-it-out) • [Modrinth](https://modrinth.com/mod/sort-it-out)
 
-## License
+</div>
 
-This repository contains the MIT license for ease of use, but you can change it
-to whatever you want.
+<div align="center">
+
+![A screenshot of a unsorted inventory, and a sorted inventory to the right of it](https://cdn.jamalam.tech/mod-assets/sort-it-out-screenshot.png)
+
+</div>
+
+Sort It Out! is an inventory sorting mod that:
+
+- has **configurable sorting**;
+- works when installed **only on the server** (even with vanilla clients!);
+- works when installed **only on the client**;
+- and allows **data-driven custom sort button locations**. 
+
+## How to Use
+
+There are multiple ways to trigger sorting:
+
+1. Middle-click a slot (_client or server_).
+2. Click the sort button (_client only_).
+
+## How to Configure
+
+Sort It Out! can be configured via an in-game configuration screen which can be accessed in Mod Menu (Fabric/Quilt) or the mods screen (Forge/NeoForge). In the case that the mod is not installed on the clientside, players can use the `/sortitout preferences` command to view and update their preferences (which will persist across rejoins and server restarts).
+
+- `Packet Send Interval`: defines the interval, in ticks, at which packets are sent when sorting on the client side (this will not take effect if the mod is installed on the serverside). Too low of an interval may cause a server to kick you.
+- `Invert Sorting`: whether to invert the sorting order.
+- `Comparators`: a list of comparators to use when comparing item stacks. If the first comparator states that the stacks are equal, the second will be used to break the tie (and so on).
+
+## FAQ
+
+### Does this need to be installed on the server/client?
+
+Sort It Out! works in any configuration - as long as the mod is installed on one of the server or the client.
+
+- **Server only**: any player without the mod (even vanilla clients) will be able to middle-click to sort and use `/sortitout` to change their preferences.
+- **Client only**: players can join any server regardless of whether the server has the mod and will be able to middle-click or use the sort buttons to sort. The config screen can be used to change preferences.
+- **Server and Client** (recommended): players can sort using middle-click or the sort buttons. The command or config screen can be used to change preferences.
+
+### How do I configure the location of sort buttons in screens?
+
+See the docs page [here](https://docs.jamalam.tech/sort-it-out/customizing-sort-buttons/#adding-a-custom-definition).
+
+### I think I found a bug!
+
+Report any issues you find on the [GitHub issue tracker](https://github.com/JamCoreModding/sort-it-out/issues).
+
+[![Rent a server with Bisect Hosting: Use Code jamalam to get 25% off](https://www.bisecthosting.com/partners/custom-banners/e0cc6668-0d29-40ff-9820-4d4f5433198a.webp)](https://bisecthosting.com/jamalam)
