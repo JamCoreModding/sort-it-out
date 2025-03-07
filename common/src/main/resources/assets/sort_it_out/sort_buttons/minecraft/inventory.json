@@ -1,5 +1,8 @@
 {
-  "type": "net.minecraft.client.gui.screens.inventory.InventoryScreen",
+  "type": {
+    "mojmap": "net.minecraft.client.gui.screens.inventory.InventoryScreen",
+    "intermediary": "net.minecraft.class_1661"
+  },
   "sortButtons": [
     {
       "xOffset": 158,

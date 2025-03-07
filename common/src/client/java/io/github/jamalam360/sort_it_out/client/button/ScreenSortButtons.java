@@ -15,15 +15,15 @@ public record ScreenSortButtons(Either<ResourceLocation, Class<Screen>> type,
                                 List<ScreenSortButton> sortButtons) {
 	public static final Codec<ScreenSortButtons> CODEC = RecordCodecBuilder.create(instance ->
 			instance.group(
-					Codec.either(ResourceLocation.CODEC, Codec.STRING.xmap(ScreenSortButtons::loadClass, Class::getName)).fieldOf("type").forGetter(ScreenSortButtons::type),
+					Codec.either(ResourceLocation.CODEC, ScreenClass.CODEC.xmap(ScreenSortButtons::loadClass, (clazz) -> new ScreenClass(clazz.getName(), clazz.getName()))).fieldOf("type").forGetter(ScreenSortButtons::type),
 					Codec.list(ScreenSortButton.CODEC).fieldOf("sortButtons").forGetter(ScreenSortButtons::sortButtons)
 			).apply(instance, ScreenSortButtons::new)
 	);
 
 	@SuppressWarnings("unchecked")
 	@Nullable
-	private static Class<Screen> loadClass(String className) {
-		String runtimeClassName = SortItOutPlatform.translateFromMojmapToRuntime(className);
+	private static Class<Screen> loadClass(ScreenClass className) {
+		String runtimeClassName = SortItOutPlatform.translateToRuntimeMappings(className.mojmap(), className.intermediary());
 
 		try {
 			return (Class<Screen>) Class.forName(runtimeClassName);

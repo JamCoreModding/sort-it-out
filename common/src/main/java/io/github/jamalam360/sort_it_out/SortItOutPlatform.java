@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class SortItOutPlatform {
 	@ExpectPlatform
-	public static String translateFromMojmapToRuntime(String mojmapClassName) {
+	public static String translateToRuntimeMappings(String mojmapClassName, String intermediaryClassName) {
 		throw new AssertionError();
 	}
 }
