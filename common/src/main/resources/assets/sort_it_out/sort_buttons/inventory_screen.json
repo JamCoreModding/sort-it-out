@@ -1,0 +1,10 @@
+{
+  "type": "net.minecraft.client.gui.screens.inventory.InventoryScreen",
+  "sortButtons": [
+    {
+      "xOffset": 158,
+      "yOffset": 68,
+      "slotStartIndex": 27
+    }
+  ]
+}

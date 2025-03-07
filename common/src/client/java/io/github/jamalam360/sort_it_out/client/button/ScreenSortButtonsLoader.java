@@ -23,10 +23,18 @@ public class ScreenSortButtonsLoader extends SimpleJsonResourceReloadListener<Sc
 
 	@Nullable
 	public List<ScreenSortButton> getCustomButtonsForScreen(AbstractContainerScreen<?> screen) {
-		ResourceLocation id = BuiltInRegistries.MENU.getKey(screen.getMenu().getType());
+		ResourceLocation id;
+
+		try {
+			id = BuiltInRegistries.MENU.getKey(screen.getMenu().getType());
+		} catch (UnsupportedOperationException ignored) {
+			id = null;
+		}
+
+		ResourceLocation finalId = id;
 
 		for (ScreenSortButtons buttons : this.values) {
-			if (buttons.type().equals(id)) {
+			if (buttons.type().map(typeId -> typeId.equals(finalId), clazz -> clazz.isAssignableFrom(screen.getClass()))) {
 				return buttons.sortButtons();
 			}
 		}

@@ -16,7 +16,7 @@ public class UserPreferences {
 	));
 
 	public Comparator<ItemStack> createComparator() {
-		Comparator<ItemStack> comparator = Comparators.EMPTINESS;
+		Comparator<ItemStack> comparator = this.invertSorting ? Comparators.EMPTINESS.reversed() : Comparators.EMPTINESS;
 
 		for (SortingComparator sortingComparator : this.comparators) {
 			Comparator<ItemStack> chain = switch (sortingComparator) {
