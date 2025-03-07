@@ -69,7 +69,7 @@ if (System.getenv("CURSEFORGE_API_KEY") != null && System.getenv("MODRINTH_API_K
 
             modrinth {
                 token = System.getenv("MODRINTH_API_KEY")
-                id = "sort-it-out"
+                id = "jcOSOvm1"
             }
         }
     }
