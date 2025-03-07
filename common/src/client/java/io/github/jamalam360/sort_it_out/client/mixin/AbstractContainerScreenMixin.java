@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
@@ -55,32 +56,21 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 			for (ScreenSortButton button : customButtons) {
 				this.addRenderableWidget(new SortButton(this.leftPos + button.xOffset(), this.topPos + button.yOffset(), this.menu, this.menu.slots.get(button.slotStartIndex())));
 			}
-		}
+		} else {
+			// If custom sort buttons defs. are not present, at least guess where the player inventory sort button should be
+			Slot invSlot = null;
 
-//		Slot mainContainer = null;
-//		Slot invContainer = null;
-//
-//		for (Slot slot : this.menu.slots) {
-//			if (slot.container instanceof Inventory) {
-//				invContainer = slot;
-//			} else if (mainContainer == null) {
-//				mainContainer = slot;
-//			}
-//
-//			if (mainContainer != null && invContainer != null) {
-//				break;
-//			}
-//		}
-//
-//		int x = (this.leftPos + this.imageWidth) - 19;
-//
-//		if (mainContainer != null) {
-//			this.addRenderableWidget(new SortButton(x, this.topPos + 5, this.menu, mainContainer));
-//		}
-//
-//		if (invContainer != null) {
-//			this.addRenderableWidget(new SortButton(x, this.topPos + 72, this.menu, invContainer));
-//		}
+			for (Slot slot : this.menu.slots) {
+				if (slot.container instanceof Inventory) {
+					invSlot = slot;
+					break;
+				}
+			}
+
+			if (invSlot != null) {
+				this.addRenderableWidget(new SortButton(this.leftPos + 158, this.topPos + 71, this.menu, invSlot));
+			}
+		}
 	}
 
 	@Inject(

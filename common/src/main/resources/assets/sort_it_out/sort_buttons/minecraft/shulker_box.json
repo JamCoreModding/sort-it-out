@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:shulker_box",
+  "sortButtons": [
+    {
+      "xOffset": 158,
+      "yOffset": 5,
+      "slotStartIndex": 0
+    },
+    {
+      "xOffset": 158,
+      "yOffset": 71,
+      "slotStartIndex": 27
+    }
+  ]
+}

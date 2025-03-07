@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:loom",
+  "sortButtons": [
+    {
+      "xOffset": 121,
+      "yOffset": 71,
+      "slotStartIndex": 4
+    }
+  ]
+}

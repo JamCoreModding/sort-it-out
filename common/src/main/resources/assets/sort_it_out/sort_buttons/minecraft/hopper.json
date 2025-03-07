@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:hopper",
+  "sortButtons": [
+    {
+      "xOffset": 134,
+      "yOffset": 19,
+      "slotStartIndex": 0
+    },
+    {
+      "xOffset": 158,
+      "yOffset": 38,
+      "slotStartIndex": 5
+    }
+  ]
+}

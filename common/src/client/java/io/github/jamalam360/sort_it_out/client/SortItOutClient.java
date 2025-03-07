@@ -27,6 +27,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
@@ -114,7 +115,16 @@ public class SortItOutClient {
 		}
 
 		if (isSlotIndexOverlayEnabled) {
-			graphics.drawCenteredString(Minecraft.getInstance().font, "" + BuiltInRegistries.MENU.getKey(screen.getMenu().getType()), Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2, 5, 0xFFFFFF);
+			ResourceLocation type;
+
+			try {
+				type = BuiltInRegistries.MENU.getKey(screen.getMenu().getType());
+			} catch (UnsupportedOperationException e) {
+				type = null;
+			}
+
+			graphics.drawCenteredString(Minecraft.getInstance().font, "" + type, ((AbstractContainerScreenAccessor) screen).getImageWidth() / 2, -50, 0xFFFFFF);
+			graphics.drawCenteredString(Minecraft.getInstance().font, screen.getClass().getName(), ((AbstractContainerScreenAccessor) screen).getImageWidth() / 2, -40, 0xFFFFFF);
 
 			for (Slot slot : screen.getMenu().slots) {
 				graphics.drawString(Minecraft.getInstance().font, "" + slot.index, slot.x, slot.y, 0xFFFFFF);
