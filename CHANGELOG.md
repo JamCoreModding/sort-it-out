@@ -1,1 +1,1 @@
-- Update icon
+- Fix button texture variant changing when hovering
