@@ -1,1 +1,1 @@
-Backport to 1.21.3
+- Fix button texture variant changing when hovering
