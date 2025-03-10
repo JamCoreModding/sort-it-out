@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(AbstractContainerScreen.class)
 public interface AbstractContainerScreenAccessor {
 	@Invoker
-	Slot invokeGetHoveredSlot(double mouseX, double mouseY);
+	boolean invokeIsHovering(Slot slot, double mouseX, double mouseY);
 	@Accessor
 	int getImageWidth();
 	@Accessor

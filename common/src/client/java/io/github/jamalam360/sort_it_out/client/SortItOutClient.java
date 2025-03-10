@@ -95,12 +95,20 @@ public class SortItOutClient {
 			int mouseX = (int) (Minecraft.getInstance().mouseHandler.xpos() * (double) Minecraft.getInstance().getWindow().getGuiScaledWidth() / (double) Minecraft.getInstance().getWindow().getScreenWidth());
 			int mouseY = (int) (Minecraft.getInstance().mouseHandler.ypos() * (double) Minecraft.getInstance().getWindow().getGuiScaledHeight() / (double) Minecraft.getInstance().getWindow().getScreenHeight());
 
-			Slot slot = ((AbstractContainerScreenAccessor) containerScreen).invokeGetHoveredSlot(mouseX, mouseY);
-			if (slot == null) {
+			Slot hovered = null;
+
+			for (Slot slot : containerScreen.getMenu().slots) {
+				if (((AbstractContainerScreenAccessor) containerScreen).invokeIsHovering(slot, mouseX, mouseY)) {
+					hovered = slot;
+					break;
+				}
+			}
+
+			if (hovered == null) {
 				return;
 			}
 
-			sortOnEitherSide(Minecraft.getInstance().player.containerMenu, slot);
+			sortOnEitherSide(Minecraft.getInstance().player.containerMenu, hovered);
 		}
 	}
 

@@ -9,10 +9,10 @@ public record C2SRequestSortPacket(int containerId, int slotIndex) implements Cu
 	public static final Type<C2SRequestSortPacket> TYPE = new Type<>(SortItOut.id("request_sort"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, C2SRequestSortPacket> STREAM_CODEC = StreamCodec.of(
 			(buf, packet) -> {
-				buf.writeContainerId(packet.containerId());
+				buf.writeInt(packet.containerId());
 				buf.writeInt(packet.slotIndex());
 			},
-			(buf) -> new C2SRequestSortPacket(buf.readContainerId(), buf.readInt())
+			(buf) -> new C2SRequestSortPacket(buf.readInt(), buf.readInt())
 	);
 
 	@Override
