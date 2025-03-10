@@ -3,7 +3,6 @@ package io.github.jamalam360.sort_it_out.client.button;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -18,7 +17,7 @@ public class ScreenSortButtonsLoader extends SimpleJsonResourceReloadListener<Sc
 	private List<ScreenSortButtons> values;
 
 	private ScreenSortButtonsLoader() {
-		super(ScreenSortButtons.CODEC, FileToIdConverter.json("sort_buttons"));
+		super(ScreenSortButtons.CODEC, "sort_buttons");
 	}
 
 	@Nullable
