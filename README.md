@@ -25,6 +25,7 @@ There are multiple ways to trigger sorting:
 
 1. Middle-click a slot (_client or server_).
 2. Click the sort button (_client only_).
+3. Press the sort keybind (default is `I`) (_client only_).
 
 ## How to Configure
 
