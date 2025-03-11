@@ -37,6 +37,8 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 
 	@Shadow @Final protected AbstractContainerMenu menu;
 
+	@Shadow protected int imageHeight;
+
 	protected AbstractContainerScreenMixin(Component title) {
 		super(title);
 	}
@@ -68,7 +70,7 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 			}
 
 			if (invSlot != null) {
-				this.addRenderableWidget(new SortButton(this.leftPos + 158, this.topPos + 71, this.menu, invSlot));
+				this.addRenderableWidget(new SortButton(this.leftPos + 158, this.topPos + this.imageHeight - 95, this.menu, invSlot));
 			}
 		}
 	}
