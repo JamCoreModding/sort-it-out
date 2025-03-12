@@ -23,7 +23,7 @@ Sort It Out! is an inventory sorting mod that:
 
 There are multiple ways to trigger sorting:
 
-1. Middle-click a slot (_client or server_).
+1. Double-click an empty slot (configurable) (_client or server_).
 2. Click the sort button (_client only_).
 3. Press the sort keybind (default is `I`) (_client only_).
 
@@ -34,6 +34,8 @@ Sort It Out! can be configured via an in-game configuration screen which can be 
 - `Packet Send Interval`: defines the interval, in ticks, at which packets are sent when sorting on the client side (this will not take effect if the mod is installed on the serverside). Too low of an interval may cause a server to kick you.
 - `Invert Sorting`: whether to invert the sorting order.
 - `Comparators`: a list of comparators to use when comparing item stacks. If the first comparator states that the stacks are equal, the second will be used to break the tie (and so on).
+- `Slot Sorting Trigger`: the action to use to trigger a sort by clicking on a slot. Defaults to double clicking an empty slot, but can be set to clicking the offhand key when hovering a slot.
+
 
 ## FAQ
 
@@ -41,9 +43,9 @@ Sort It Out! can be configured via an in-game configuration screen which can be 
 
 Sort It Out! works in any configuration - as long as the mod is installed on one of the server or the client.
 
-- **Server only**: any player without the mod (even vanilla clients) will be able to middle-click to sort and use `/sortitout` to change their preferences.
-- **Client only**: players can join any server regardless of whether the server has the mod and will be able to middle-click or use the sort buttons to sort. The config screen can be used to change preferences.
-- **Server and Client** (recommended): players can sort using middle-click or the sort buttons. The command or config screen can be used to change preferences.
+- **Server only**: any player without the mod (even vanilla clients) will be able to double-click to sort (by default) and use `/sortitout` to change their preferences.
+- **Client only**: players can join any server regardless of whether the server has the mod and will be able to double-click or use the sort buttons to sort. The config screen can be used to change preferences.
+- **Server and Client** (recommended): players can sort using double-click or the sort buttons. The command or config screen can be used to change preferences.
 
 ### How do I configure the location of sort buttons in screens?
 
