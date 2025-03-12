@@ -17,15 +17,7 @@ public class ServerTranslationsHelper {
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("key.sort_it_out.sort", "Sort Hovered Inventory");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("text.sort_it_out.sort_in_progress", "Sorting in progress; do not close this screen");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("text.sort_it_out.sort", "Sort container");
-		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("text.sort_it_out.command.help", "== Sort It Out - Help ==
-Sort an inventory by:
-- [if the mod is installed on your client] pressing the set keybind (default I)
-- [if the mod is installed on your client] clicking the sort button shown within the inventory
-- double clicking an empty slot (by default, configurable using the slot sorting trigger config option)
-
-To configure the mod:
-- [if the mod is installed on your client] Use the in-game configuration screen within the mods menu
-- Use /sortitout preferences");
+		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("text.sort_it_out.command.help", "== Sort It Out - Help ==\nSort an inventory by:\n- [if the mod is installed on your client] Pressing the set keybind (default I)\n- [if the mod is installed on your client] Clicking the sort button shown within the inventory\n- double clicking an empty slot (by default, configurable using the slot sorting trigger config option)\n\nTo configure the mod:\n- [if the mod is installed on your client] Use the in-game configuration screen within the mods menu\n- Use /sortitout preferences");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("text.sort_it_out.command.invert_sorting", "Invert Sorting: %s");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("text.sort_it_out.command.comparators", "Comparators: %s");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("text.sort_it_out.command.unknown_comparator", "Unknown comparator %s (valid values: %s)");
