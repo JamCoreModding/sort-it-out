@@ -1,18 +1,25 @@
 package io.github.jamalam360.sort_it_out.client.mixin;
 
+import dev.architectury.networking.NetworkManager;
+import io.github.jamalam360.sort_it_out.client.SortItOutClient;
 import io.github.jamalam360.sort_it_out.client.button.ScreenSortButton;
 import io.github.jamalam360.sort_it_out.client.button.ScreenSortButtonsLoader;
 import io.github.jamalam360.sort_it_out.client.gui.SortButton;
+import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
+import io.github.jamalam360.sort_it_out.util.AbstractContainerMenuMixinImpl;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -30,6 +37,9 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 	@Shadow @Final protected AbstractContainerMenu menu;
 
 	@Shadow protected int imageHeight;
+
+	@Unique
+	private final AbstractContainerMenuMixinImpl sort_it_out$impl = new AbstractContainerMenuMixinImpl();
 
 	protected AbstractContainerScreenMixin(Component title) {
 		super(title);
@@ -64,6 +74,25 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 			if (invSlot != null) {
 				this.addRenderableWidget(new SortButton(this.leftPos + 158, this.topPos + this.imageHeight - 95, this.menu, invSlot));
 			}
+		}
+	}
+
+	@Inject(
+			method = "slotClicked",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handleInventoryMouseClick(IIILnet/minecraft/world/inventory/ClickType;Lnet/minecraft/world/entity/player/Player;)V"
+			),
+			cancellable = true
+	)
+	private void sort_it_out$triggerSortOnMiddleClick(Slot slot, int slotId, int mouseButton, ClickType type, CallbackInfo ci) {
+		if (slotId < 0 || slotId >= this.menu.slots.size() || NetworkManager.canServerReceive(BidirectionalUserPreferencesUpdatePacket.C2S.TYPE)) {
+			return;
+		}
+
+		if (this.sort_it_out$impl.shouldSort(this.menu.getSlot(slotId), mouseButton, type, this.menu.getCarried(), Minecraft.getInstance().player)) {
+			SortItOutClient.sortOnEitherSide(this.menu, this.menu.getSlot(slotId));
+			ci.cancel();
 		}
 	}
 }
