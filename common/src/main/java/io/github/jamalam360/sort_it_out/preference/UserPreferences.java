@@ -14,6 +14,7 @@ public class UserPreferences {
 			SortingComparator.COUNT,
 			SortingComparator.DURABILITY
 	));
+	public SlotSortingTrigger slotSortingTrigger = SlotSortingTrigger.DOUBLE_CLICK_EMPTY_SLOT;
 
 	public Comparator<ItemStack> createComparator() {
 		Comparator<ItemStack> comparator = this.invertSorting ? Comparators.EMPTINESS.reversed() : Comparators.EMPTINESS;
@@ -37,6 +38,12 @@ public class UserPreferences {
 		DISPLAY_NAME,
 		NAMESPACE,
 		COUNT,
-		DURABILITY;
+		DURABILITY
+	}
+
+	public enum SlotSortingTrigger {
+		PRESS_OFFHAND_KEY,
+		PRESS_OFFHAND_KEY_EMPTY_SLOT,
+		DOUBLE_CLICK_EMPTY_SLOT
 	}
 }

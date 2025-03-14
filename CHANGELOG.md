@@ -1,1 +1,4 @@
-- Fix button texture variant changing when hovering
+- Fix 9x6 container button placement.
+- Add slot sorting trigger config.
+- Add help command
+- Other small fixes

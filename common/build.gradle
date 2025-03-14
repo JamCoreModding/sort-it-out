@@ -32,7 +32,7 @@ tasks.register("updateServerTranslationsHelper") {
             langDir.listFiles((FilenameFilter) { dir, name -> name.endsWith(".json") }).each { jsonFile ->
                 try {
                     new JsonSlurper().parse(jsonFile).entrySet().forEach {
-                        output += "\t\tLANGUAGES.computeIfAbsent(\"${jsonFile.name.split(".json")[0]}\", (ignored) -> new HashMap<>()).put(\"${it.key}\", \"${it.value}\");"
+                        output += "\t\tLANGUAGES.computeIfAbsent(\"${jsonFile.name.split(".json")[0]}\", (ignored) -> new HashMap<>()).put(\"${it.key}\", \"${it.value.replace("\n", "\\n")}\");"
                     }
                 } catch (Exception e) {
                     println "Error processing ${jsonFile.name}: ${e.message}"
