@@ -1,7 +1,6 @@
 package io.github.jamalam360.sort_it_out.sort;
 
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
-import net.minecraft.references.Items;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Comparator;
@@ -17,9 +16,9 @@ public class SelectionSortContainerSorter implements ContainerSorter {
 		this.mergeStacks(container, startIndex, containerSize);
 		Comparator<ItemStack> comparator = preferences.createComparator();
 
-		for (int j = 0; j < containerSize - 1; j++) {
+		for (int j = startIndex; j < startIndex + containerSize - 1; j++) {
 			int min = j;
-			for (int i = j + 1; i < containerSize; i++) {
+			for (int i = j + 1; i < startIndex + containerSize; i++) {
 				if (comparator.compare(container.getItem(i), container.getItem(min)) < 0 || container.getItem(min).isEmpty()) {
 					min = i;
 				}

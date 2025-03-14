@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:generic_9x6",
+  "sortButtons": [
+    {
+      "xOffset": 158,
+      "yOffset": 5,
+      "slotStartIndex": 0
+    },
+    {
+      "xOffset": 158,
+      "yOffset": 126,
+      "slotStartIndex": 54
+    }
+  ]
+}
