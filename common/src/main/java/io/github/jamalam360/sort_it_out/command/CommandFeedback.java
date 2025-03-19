@@ -22,7 +22,7 @@ public class CommandFeedback {
 	}
 
 	public static Component formatComparatorList(CommandContext<CommandSourceStack> ctx, List<UserPreferences.SortingComparator> comparators) {
-		MutableComponent result = formatSingleComparator(ctx, comparators.getFirst());
+		MutableComponent result = formatSingleComparator(ctx, comparators.get(0));
 
 		for (int i = 1; i < comparators.size(); i++) {
 			result = result.append(", ").append(formatSingleComparator(ctx, comparators.get(i)));

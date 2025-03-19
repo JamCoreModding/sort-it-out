@@ -6,6 +6,7 @@ import com.google.gson.JsonParseException;
 import com.mojang.serialization.JsonOps;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -26,6 +27,10 @@ public class ScreenSortButtonsLoader extends SimpleJsonResourceReloadListener {
 
 	@Nullable
 	public List<ScreenSortButton> getCustomButtonsForScreen(AbstractContainerScreen<?> screen) {
+		if (screen instanceof InventoryScreen) {
+			return List.of(new ScreenSortButton(158, 68, 9));
+		}
+
 		ResourceLocation id;
 
 		try {
@@ -37,7 +42,7 @@ public class ScreenSortButtonsLoader extends SimpleJsonResourceReloadListener {
 		ResourceLocation finalId = id;
 
 		for (ScreenSortButtons buttons : this.values) {
-			if (buttons.type().map(typeId -> typeId.equals(finalId), clazz -> clazz.isAssignableFrom(screen.getClass()))) {
+			if (buttons.type().equals(finalId)) {
 				return buttons.sortButtons();
 			}
 		}
