@@ -1,5 +1,6 @@
 package io.github.jamalam360.sort_it_out.mixin;
 
+import com.mojang.datafixers.util.Pair;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
@@ -7,10 +8,10 @@ import io.github.jamalam360.sort_it_out.sort.ContainerSorterUtil;
 import io.github.jamalam360.sort_it_out.sort.ServerSortableContainer;
 import io.github.jamalam360.sort_it_out.util.AbstractContainerMenuMixinImpl;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.protocol.game.ClientboundSetPlayerInventoryPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
@@ -23,6 +24,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 @Mixin(AbstractContainerMenu.class)
 public abstract class AbstractContainerMenuMixin {
@@ -55,7 +58,7 @@ public abstract class AbstractContainerMenuMixin {
 			SortItOut.playSortSound(player);
 
 			if (preferences.slotSortingTrigger == UserPreferences.SlotSortingTrigger.PRESS_OFFHAND_KEY) {
-				((ServerPlayer) player).connection.send(new ClientboundSetPlayerInventoryPacket(Inventory.SLOT_OFFHAND, player.getOffhandItem()));
+				((ServerPlayer) player).connection.send(new ClientboundSetEquipmentPacket(player.getId(), List.of(Pair.of(EquipmentSlot.OFFHAND, player.getOffhandItem()))));
 			}
 
 			ci.cancel();

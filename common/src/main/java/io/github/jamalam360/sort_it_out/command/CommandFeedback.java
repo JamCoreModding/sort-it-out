@@ -5,6 +5,7 @@ import dev.architectury.networking.NetworkManager;
 import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
+import io.github.jamalam360.sort_it_out.mixinsupport.ServerPlayerLanguageAccessor;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -43,10 +44,10 @@ public class CommandFeedback {
 	}
 
 	public static MutableComponent translatable(CommandContext<CommandSourceStack> ctx, String key, Object... args) {
-		if (NetworkManager.canPlayerReceive(ctx.getSource().getPlayer(), BidirectionalUserPreferencesUpdatePacket.S2C.TYPE)) {
+		if (NetworkManager.canPlayerReceive(ctx.getSource().getPlayer(), BidirectionalUserPreferencesUpdatePacket.S2C.TYPE.location())) {
 			return Component.translatable(key, args);
 		} else {
-			String lang = ctx.getSource().getPlayer() == null ? "en_us" : ctx.getSource().getPlayer().clientInformation().language();
+			String lang = ctx.getSource().getPlayer() == null ? "en_us" : ((ServerPlayerLanguageAccessor) ctx.getSource().getPlayer()).sort_it_out$getLanguage();
 
 			for (int i = 0; i < args.length; i++) {
 				if (args[i] instanceof Component component) {

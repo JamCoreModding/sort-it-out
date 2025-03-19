@@ -1,9 +1,12 @@
 package io.github.jamalam360.sort_it_out.client.button;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.mojang.serialization.JsonOps;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -13,12 +16,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public class ScreenSortButtonsLoader extends SimpleJsonResourceReloadListener<ScreenSortButtons> {
+public class ScreenSortButtonsLoader extends SimpleJsonResourceReloadListener {
 	public static final ScreenSortButtonsLoader INSTANCE = new ScreenSortButtonsLoader();
 	private List<ScreenSortButtons> values;
 
 	private ScreenSortButtonsLoader() {
-		super(ScreenSortButtons.CODEC, FileToIdConverter.json("sort_buttons"));
+		super(new Gson(), "sort_buttons");
 	}
 
 	@Nullable
@@ -43,8 +46,8 @@ public class ScreenSortButtonsLoader extends SimpleJsonResourceReloadListener<Sc
 	}
 
 	@Override
-	protected void apply(Map<ResourceLocation, ScreenSortButtons> values, ResourceManager resourceManager, ProfilerFiller profiler) {
-		this.values = List.copyOf(values.values());
+	protected void apply(Map<ResourceLocation, JsonElement> values, ResourceManager resourceManager, ProfilerFiller profiler) {
+		this.values = values.values().stream().map(el -> ScreenSortButtons.CODEC.parse(JsonOps.INSTANCE, el).getOrThrow(false, JsonParseException::new)).toList();
 		SortItOut.LOGGER.info("Loaded {} sort button locations", values.size());
 	}
 }

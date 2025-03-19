@@ -18,6 +18,7 @@ import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpda
 import io.github.jamalam360.sort_it_out.network.C2SRequestSortPacket;
 import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
 import io.github.jamalam360.sort_it_out.sort.ContainerSorterUtil;
+import io.github.jamalam360.sort_it_out.util.NetworkManager2;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -50,7 +51,8 @@ public class SortItOutClient {
 		ClientScreenInputEvent.KEY_RELEASED_PRE.register(SortItOutClient::keyReleased);
 		ClientGuiEvent.RENDER_CONTAINER_FOREGROUND.register(SortItOutClient::renderContainerForeground);
 
-		NetworkManager.registerReceiver(NetworkManager.Side.S2C, BidirectionalUserPreferencesUpdatePacket.S2C.TYPE, BidirectionalUserPreferencesUpdatePacket.S2C.STREAM_CODEC, (prefs, ctx) -> {
+		NetworkManager.registerReceiver(NetworkManager.Side.S2C, BidirectionalUserPreferencesUpdatePacket.S2C.TYPE.location(), (buf, ctx) -> {
+			BidirectionalUserPreferencesUpdatePacket.S2C prefs = BidirectionalUserPreferencesUpdatePacket.S2C.STREAM_CODEC.decode(buf);
 			CONFIG.get().invertSorting = prefs.preferences().invertSorting;
 			CONFIG.get().comparators = prefs.preferences().comparators;
 			CONFIG.save();
@@ -77,8 +79,8 @@ public class SortItOutClient {
 	}
 
 	public static void sortOnEitherSide(AbstractContainerMenu menu, Slot slot) {
-		if (NetworkManager.canServerReceive(C2SRequestSortPacket.TYPE) && !isClientSortingForced) {
-			NetworkManager.sendToServer(new C2SRequestSortPacket(menu.containerId, slot.index));
+		if (NetworkManager.canServerReceive(C2SRequestSortPacket.TYPE.location()) && !isClientSortingForced) {
+			NetworkManager2.sendToServer(new C2SRequestSortPacket(menu.containerId, slot.index), C2SRequestSortPacket.STREAM_CODEC);
 		} else if (!ClientPacketWorkQueue.INSTANCE.hasWorkRemaining()) {
 			ContainerSorterUtil.sortWithSelectionSort(slot.container, new ClientSortableContainer(slot.container), CONFIG.get());
 		} else {
@@ -95,7 +97,7 @@ public class SortItOutClient {
 			int mouseX = (int) (Minecraft.getInstance().mouseHandler.xpos() * (double) Minecraft.getInstance().getWindow().getGuiScaledWidth() / (double) Minecraft.getInstance().getWindow().getScreenWidth());
 			int mouseY = (int) (Minecraft.getInstance().mouseHandler.ypos() * (double) Minecraft.getInstance().getWindow().getGuiScaledHeight() / (double) Minecraft.getInstance().getWindow().getScreenHeight());
 
-			Slot slot = ((AbstractContainerScreenAccessor) containerScreen).invokeGetHoveredSlot(mouseX, mouseY);
+			Slot slot = ((AbstractContainerScreenAccessor) containerScreen).invokeFindSlot(mouseX, mouseY);
 			if (slot == null) {
 				return;
 			}

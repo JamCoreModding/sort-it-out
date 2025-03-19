@@ -6,6 +6,7 @@ import io.github.jamalam360.jamlib.config.ConfigManager;
 import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
+import io.github.jamalam360.sort_it_out.util.NetworkManager2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
@@ -43,9 +44,9 @@ public class Config extends UserPreferences implements ConfigExtensions<Config> 
 	}
 
 	public void sync() {
-		if (NetworkManager.canServerReceive(BidirectionalUserPreferencesUpdatePacket.C2S.TYPE) && !Minecraft.getInstance().isSingleplayer()) {
+		if (NetworkManager.canServerReceive(BidirectionalUserPreferencesUpdatePacket.C2S.TYPE.location()) && !Minecraft.getInstance().isSingleplayer()) {
 			SortItOut.LOGGER.info("Sending updated preferences to server");
-			NetworkManager.sendToServer(new BidirectionalUserPreferencesUpdatePacket.C2S(this));
+			NetworkManager2.sendToServer(new BidirectionalUserPreferencesUpdatePacket.C2S(this), BidirectionalUserPreferencesUpdatePacket.C2S.STREAM_CODEC);
 		}
 	}
 }

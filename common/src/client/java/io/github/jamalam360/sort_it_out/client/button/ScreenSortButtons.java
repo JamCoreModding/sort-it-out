@@ -23,7 +23,7 @@ public record ScreenSortButtons(Either<ResourceLocation, Class<Screen>> type,
 	@SuppressWarnings("unchecked")
 	@Nullable
 	private static Class<Screen> loadClass(ScreenClass className) {
-		String runtimeClassName = SortItOutPlatform.translateToRuntimeMappings(className.mojmap(), className.intermediary());
+		String runtimeClassName = SortItOutPlatform.translateToRuntimeMappings(className.srg(), className.intermediary());
 
 		try {
 			return (Class<Screen>) Class.forName(runtimeClassName);

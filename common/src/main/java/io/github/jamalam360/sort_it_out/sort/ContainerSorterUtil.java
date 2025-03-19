@@ -34,6 +34,6 @@ public class ContainerSorterUtil {
 			return false;
 		}
 
-		return ItemStack.isSameItemSameComponents(a, b);
+		return ItemStack.isSameItemSameTags(a, b);
 	}
 }

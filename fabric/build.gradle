@@ -24,7 +24,7 @@ dependencies {
     modImplementation libs.fabric.loader
     modImplementation libs.fabric.api
     modImplementation libs.architectury.fabric
-    modRuntimeOnly libs.modmenu
+    modImplementation libs.modmenu
     modImplementation libs.jamlib.fabric
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }

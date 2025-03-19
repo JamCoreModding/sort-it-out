@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[1,)"
+loaderVersion = "[47,)"
 license = "MIT"
 issueTrackerURL="https://github.com/JamCoreModding/sort-it-out/issues"
 
@@ -15,35 +15,29 @@ A capable inventory sorting mod that works either client-side or server-side
 '''
 
 [[dependencies.sort_it_out]]
-modId = "neoforge"
-type = "required"
-versionRange = "[${neoforge_version},)"
+modId = "forge"
+mandatory = true
+versionRange = "[47.4.0,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.sort_it_out]]
 modId = "minecraft"
-type = "required"
+mandatory = true
 versionRange = "[${minecraft_version},)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.sort_it_out]]
 modId = "architectury"
-type = "required"
+mandatory = true
 versionRange = "[${architectury_version},)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.sort_it_out]]
 modId = "jamlib"
-type = "required"
+mandatory = true
 versionRange = "[${jamlib_version},)"
 ordering = "AFTER"
 side = "BOTH"
-
-[[mixins]]
-config = "sort_it_out.mixins.json"
-
-[[mixins]]
-config = "sort_it_out.client.mixins.json"

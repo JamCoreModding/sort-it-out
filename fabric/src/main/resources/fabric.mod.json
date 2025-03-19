@@ -21,6 +21,9 @@
         ],
         "client": [
             "io.github.jamalam360.sort_it_out.fabric.SortItOutClientFabric"
+        ],
+        "modmenu": [
+            "io.github.jamalam360.sort_it_out.fabric.ModMenuCompatibility"
         ]
     },
     "mixins": [

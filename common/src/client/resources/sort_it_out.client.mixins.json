@@ -8,7 +8,7 @@
   "client": [
     "AbstractContainerScreenAccessor",
     "AbstractContainerScreenMixin",
-    "SpriteIconButtonMixin"
+    "ImageButtonMixin"
   ],
   "server": [
   ],

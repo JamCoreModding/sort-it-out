@@ -1,7 +1,7 @@
 {
   "type": {
-    "mojmap": "net.minecraft.client.gui.screens.inventory.InventoryScreen",
-    "intermediary": "net.minecraft.class_1661"
+    "intermediary": "net.minecraft.class_1661",
+    "srg": "net.minecraft.src.C_3664_"
   },
   "sortButtons": [
     {
