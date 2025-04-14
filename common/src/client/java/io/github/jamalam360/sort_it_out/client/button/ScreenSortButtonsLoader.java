@@ -31,13 +31,11 @@ public class ScreenSortButtonsLoader extends SimpleJsonResourceReloadListener {
 		try {
 			id = BuiltInRegistries.MENU.getKey(screen.getMenu().getType());
 		} catch (UnsupportedOperationException ignored) {
-			id = null;
+			return null;
 		}
 
-		ResourceLocation finalId = id;
-
 		for (ScreenSortButtons buttons : this.values) {
-			if (buttons.type().map(typeId -> typeId.equals(finalId), clazz -> clazz.isAssignableFrom(screen.getClass()))) {
+			if (buttons.type().equals(id)) {
 				return buttons.sortButtons();
 			}
 		}
