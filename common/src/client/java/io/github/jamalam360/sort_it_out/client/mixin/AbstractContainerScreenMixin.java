@@ -53,7 +53,6 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 		super(title);
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Inject(
 			method = "init",
 			at = @At("TAIL")
