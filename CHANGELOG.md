@@ -1,4 +1,1 @@
-- Fix 9x6 container button placement.
-- Add slot sorting trigger config.
-- Add help command
-- Other small fixes
+- (fix) Sort button now correctly moves when recipe book is opened (#5).
