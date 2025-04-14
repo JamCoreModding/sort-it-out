@@ -1,9 +1,12 @@
 package io.github.jamalam360.sort_it_out.client;
 
+import com.google.common.primitives.Shorts;
+import com.google.common.primitives.SignedBytes;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.HashedStack;
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
@@ -44,7 +47,7 @@ public class ClientPacketWorkQueue {
 
 		if (action != null && Minecraft.getInstance().getConnection() != null) {
 			ServerboundContainerClickPacket packet = action.toPacket();
-			if (Minecraft.getInstance().screen == null || (Minecraft.getInstance().screen instanceof AbstractContainerScreen<?> containerScreen && containerScreen.getMenu().containerId != packet.getContainerId())) {
+			if (Minecraft.getInstance().screen == null || (Minecraft.getInstance().screen instanceof AbstractContainerScreen<?> containerScreen && containerScreen.getMenu().containerId != packet.containerId())) {
 				SortItOut.LOGGER.info("Aborting sort as the player closed the container window before it was completed");
 				this.workQueue.clear();
 			} else {
@@ -63,11 +66,11 @@ public class ClientPacketWorkQueue {
 			return new ServerboundContainerClickPacket(
 					this.menu().containerId,
 					this.menu().getStateId(),
-					this.slot(),
-					GLFW.GLFW_MOUSE_BUTTON_LEFT,
+					Shorts.checkedCast(this.slot()),
+					SignedBytes.checkedCast(GLFW.GLFW_MOUSE_BUTTON_LEFT),
 					ClickType.PICKUP,
-					this.pickedUp(),
-					Int2ObjectMaps.singleton(this.slot(), ItemStack.EMPTY)
+					Int2ObjectMaps.singleton(this.slot(), HashedStack.EMPTY),
+					HashedStack.create(this.pickedUp(), Minecraft.getInstance().getConnection().decoratedHashOpsGenenerator())
 			);
 		}
 	}
@@ -78,11 +81,11 @@ public class ClientPacketWorkQueue {
 			return new ServerboundContainerClickPacket(
 					this.menu().containerId,
 					this.menu().getStateId(),
-					this.slot(),
-					GLFW.GLFW_MOUSE_BUTTON_LEFT,
+					Shorts.checkedCast(this.slot()),
+					SignedBytes.checkedCast(GLFW.GLFW_MOUSE_BUTTON_LEFT),
 					ClickType.PICKUP,
-					this.newCarriedItem(),
-					Int2ObjectMaps.singleton(this.slot(), this.newSlotItem())
+					Int2ObjectMaps.singleton(this.slot(), HashedStack.create(this.newSlotItem(), Minecraft.getInstance().getConnection().decoratedHashOpsGenenerator())),
+					HashedStack.create(this.newCarriedItem(), Minecraft.getInstance().getConnection().decoratedHashOpsGenenerator())
 			);
 		}
 	}
