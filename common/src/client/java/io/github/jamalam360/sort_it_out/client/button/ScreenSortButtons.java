@@ -1,13 +1,8 @@
 package io.github.jamalam360.sort_it_out.client.button;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.jamalam360.sort_it_out.SortItOut;
-import io.github.jamalam360.sort_it_out.SortItOutPlatform;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 

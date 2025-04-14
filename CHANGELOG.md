@@ -1,1 +1,1 @@
-Backport to 1.20.1.
+- (fix) Sort button now correctly moves when recipe book is opened (#5).
