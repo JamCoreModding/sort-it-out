@@ -8,12 +8,10 @@ import io.github.jamalam360.sort_it_out.client.gui.SortButton;
 import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import io.github.jamalam360.sort_it_out.util.AbstractContainerMenuMixinImpl;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -55,7 +53,6 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 		super(title);
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Inject(
 			method = "init",
 			at = @At("TAIL")
