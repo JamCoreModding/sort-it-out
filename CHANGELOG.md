@@ -1,1 +1,1 @@
-- (fix) Sort button now correctly moves when recipe book is opened (#5).
+- (fix) only sync config when in-game (#7, #9)
