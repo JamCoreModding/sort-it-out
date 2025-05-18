@@ -3,14 +3,14 @@
 architectury = "16.1.4"
 
 # https://parchmentmc.org/docs/getting-started
-parchment-minecraft = "1.21.4"
-parchment = "2025.02.16"
+parchment-minecraft = "1.21.5"
+parchment = "2025.04.19"
 
 # https://projects.neoforged.net/neoforged/neoforge
-neoforge = "21.5.9-beta"
+neoforge = "21.5.66-beta"
 
 # https://fabricmc.net/develop
-fabric-loader = "0.16.13"
+fabric-loader = "0.16.14"
 fabric-api = "0.120.0+1.21.5"
 
 # https://maven.jamalam.tech/#/releases
