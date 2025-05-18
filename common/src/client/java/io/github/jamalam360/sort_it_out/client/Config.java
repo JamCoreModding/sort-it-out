@@ -39,7 +39,10 @@ public class Config extends UserPreferences implements ConfigExtensions<Config> 
 
 	@Override
 	public void afterSave() {
-		this.sync();
+		// Only sync when in game
+		if (Minecraft.getInstance() != null) {
+			this.sync();
+		}
 	}
 
 	public void sync() {
