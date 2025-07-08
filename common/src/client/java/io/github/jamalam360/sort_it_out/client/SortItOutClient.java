@@ -108,10 +108,10 @@ public class SortItOutClient {
 		if (ClientPacketWorkQueue.INSTANCE.hasWorkRemaining()) {
 			Font font = Minecraft.getInstance().font;
 			Component component = Component.translatable("text.sort_it_out.sort_in_progress");
-			graphics.pose().pushPose();
-			graphics.pose().translate(0, -((AbstractContainerScreenAccessor) screen).getTopPos(), 0);
+			graphics.pose().pushMatrix();
+			graphics.pose().translate(0, -((AbstractContainerScreenAccessor) screen).getTopPos());
 			graphics.drawCenteredString(font, component, ((AbstractContainerScreenAccessor) screen).getImageWidth() / 2, 6, 0xFFFFFF);
-			graphics.pose().popPose();
+			graphics.pose().pushMatrix();
 		}
 
 		if (isSlotIndexOverlayEnabled) {
