@@ -1,1 +1,1 @@
-- (fix) only sync config when in-game (#7, #9)
+- Update to 1.21.8 (#12).
