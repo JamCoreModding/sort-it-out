@@ -24,6 +24,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -37,7 +38,7 @@ import static dev.architectury.event.events.client.ClientCommandRegistrationEven
 
 public class SortItOutClient {
 	public static final ConfigManager<Config> CONFIG = new ConfigManager<>(SortItOut.MOD_ID, "client_preferences", Config.class);
-	private static final KeyMapping SORT_KEY_BINDING = new KeyMapping("key.sort_it_out.sort", GLFW.GLFW_KEY_I, "category.sort_it_out");
+	private static final KeyMapping SORT_KEY_BINDING = new KeyMapping("key.sort_it_out.sort", GLFW.GLFW_KEY_I, KeyMapping.Category.register(SortItOut.id("sort_it_out")));
 	private static boolean isClientSortingForced = false;
 	private static boolean isSlotIndexOverlayEnabled = false;
 
@@ -132,9 +133,9 @@ public class SortItOutClient {
 		}
 	}
 
-	private static EventResult keyReleased(Minecraft minecraft, Screen screen, int keyCode, int scanCode, int modifiers) {
-		if (SORT_KEY_BINDING.matches(keyCode, scanCode)) {
-			KeyMapping.click(InputConstants.Type.KEYSYM.getOrCreate(keyCode));
+	private static EventResult keyReleased(Minecraft minecraft, Screen screen, KeyEvent ev) {
+		if (SORT_KEY_BINDING.matches(ev)) {
+			KeyMapping.click(InputConstants.Type.KEYSYM.getOrCreate(ev.key()));
 			return EventResult.interruptTrue();
 		}
 

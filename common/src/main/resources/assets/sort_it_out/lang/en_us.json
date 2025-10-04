@@ -1,5 +1,5 @@
 {
-  "category.sort_it_out": "Sort It Out",
+  "key.category.sort_it_out.sort_it_out": "Sort It Out",
   "key.sort_it_out.sort": "Sort Hovered Inventory",
   "text.sort_it_out.sort_in_progress": "Sorting in progress; do not close this screen",
   "text.sort_it_out.sort": "Sort container",

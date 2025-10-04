@@ -3,10 +3,9 @@ package io.github.jamalam360.sort_it_out.client.gui;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import io.github.jamalam360.sort_it_out.client.ClientPacketWorkQueue;
 import io.github.jamalam360.sort_it_out.client.SortItOutClient;
-import io.github.jamalam360.sort_it_out.client.mixinsupport.MutableSpriteSpriteIconButton;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.SpriteIconButton;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -24,17 +23,11 @@ public class SortButton extends SpriteIconButton.CenteredIcon {
 	private final Slot slot;
 
 	public SortButton(int x, int y, AbstractContainerMenu menu, Slot slot) {
-		super(WIDTH, HEIGHT, ANNOTATION, SPRITE_WIDTH, SPRITE_HEIGHT, SPRITE, SortButton::onPress, null);
+		super(WIDTH, HEIGHT, ANNOTATION, SPRITE_WIDTH, SPRITE_HEIGHT, new WidgetSprites(SPRITE, SPRITE, HOVERED_SPRITE, HOVERED_SPRITE), SortButton::onPress, null, null);
 		this.menu = menu;
 		this.slot = slot;
 		this.setX(x);
 		this.setY(y);
-	}
-
-	@Override
-	public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		((MutableSpriteSpriteIconButton) this).setSprite(this.isHovered() ? HOVERED_SPRITE : SPRITE);
-		super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
 	}
 
 	private static void onPress(Button button) {

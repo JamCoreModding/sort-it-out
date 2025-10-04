@@ -13,7 +13,7 @@ public class ServerTranslationsHelper {
 
 	static {
 		// gradle-auto-populated
-		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("category.sort_it_out", "Sort It Out");
+		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("key.category.sort_it_out.sort_it_out", "Sort It Out");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("key.sort_it_out.sort", "Sort Hovered Inventory");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("text.sort_it_out.sort_in_progress", "Sorting in progress; do not close this screen");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("text.sort_it_out.sort", "Sort container");

@@ -44,7 +44,7 @@ public abstract class AbstractContainerMenuMixin {
 			cancellable = true
 	)
 	private void sort_it_out$triggerSortOnMiddleClick(int slotId, int button, ClickType clickType, Player player, CallbackInfo ci) {
-		if (slotId < 0 || slotId >= this.slots.size() || player.level().isClientSide) {
+		if (slotId < 0 || slotId >= this.slots.size() || player.level().isClientSide()) {
 			return;
 		}
 
