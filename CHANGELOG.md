@@ -1,1 +1,1 @@
-Update to 1.21.9
+- Fix config syncing issue causing log spam on LAN servers.
