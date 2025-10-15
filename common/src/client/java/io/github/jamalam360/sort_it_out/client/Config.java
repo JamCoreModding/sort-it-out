@@ -46,9 +46,15 @@ public class Config extends UserPreferences implements ConfigExtensions<Config> 
 	}
 
 	public void sync() {
-		if (NetworkManager.canServerReceive(BidirectionalUserPreferencesUpdatePacket.C2S.TYPE) && !Minecraft.getInstance().isSingleplayer()) {
+		if (this.shouldSync()) {
 			SortItOut.LOGGER.info("Sending updated preferences to server");
 			NetworkManager.sendToServer(new BidirectionalUserPreferencesUpdatePacket.C2S(this));
 		}
+	}
+
+	private boolean shouldSync() {
+		return NetworkManager.canServerReceive(BidirectionalUserPreferencesUpdatePacket.C2S.TYPE) && // Only send if the server has SIO installed
+						!Minecraft.getInstance().isSingleplayer() && // and we are not in single player
+						!(!Minecraft.getInstance().isSingleplayer() && Minecraft.getInstance().isLocalServer()); // and we are not hosting a lan server.
 	}
 }
