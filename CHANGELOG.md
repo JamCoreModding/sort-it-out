@@ -1,1 +1,1 @@
-- (fix) only sync config when in-game (#7, #9)
+- Fix config syncing issue causing log spam on LAN servers.
