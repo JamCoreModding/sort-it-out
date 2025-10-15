@@ -25,6 +25,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -38,17 +39,19 @@ import static dev.architectury.event.events.client.ClientCommandRegistrationEven
 
 public class SortItOutClient {
 	public static final ConfigManager<Config> CONFIG = new ConfigManager<>(SortItOut.MOD_ID, "client_preferences", Config.class);
-	private static final KeyMapping SORT_KEY_BINDING = new KeyMapping("key.sort_it_out.sort", GLFW.GLFW_KEY_I, KeyMapping.Category.register(SortItOut.id("sort_it_out")));
+	private static KeyMapping sortKeyMapping;
 	private static boolean isClientSortingForced = false;
 	private static boolean isSlotIndexOverlayEnabled = false;
 
 	public static void init() {
 		ServerUserPreferences.INSTANCE.setClientUserPreferences(CONFIG);
-		KeyMappingRegistry.register(SORT_KEY_BINDING);
 		ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, ScreenSortButtonsLoader.INSTANCE, SortItOut.id("sort_button_reloader"));
+		sortKeyMapping = new KeyMapping("key.sort_it_out.sort", GLFW.GLFW_KEY_I, KeyMapping.Category.register(SortItOut.id("sort_it_out")));
+		KeyMappingRegistry.register(sortKeyMapping);
 		ClientTickEvent.CLIENT_LEVEL_POST.register(SortItOutClient::postLevelTick);
 		ClientPlayLifecycleEvents.JOIN.register((mc) -> CONFIG.get().sync());
 		ClientScreenInputEvent.KEY_RELEASED_PRE.register(SortItOutClient::keyReleased);
+		ClientScreenInputEvent.MOUSE_RELEASED_PRE.register(SortItOutClient::mouseReleased);
 		ClientGuiEvent.RENDER_CONTAINER_FOREGROUND.register(SortItOutClient::renderContainerForeground);
 
 		NetworkManager.registerReceiver(NetworkManager.Side.S2C, BidirectionalUserPreferencesUpdatePacket.S2C.TYPE, BidirectionalUserPreferencesUpdatePacket.S2C.STREAM_CODEC, (prefs, ctx) -> {
@@ -92,16 +95,18 @@ public class SortItOutClient {
 	private static void postLevelTick(ClientLevel level) {
 		ClientPacketWorkQueue.INSTANCE.tick();
 
-		if (SORT_KEY_BINDING.consumeClick() && Minecraft.getInstance().screen instanceof AbstractContainerScreen<?> containerScreen) {
-			int mouseX = (int) (Minecraft.getInstance().mouseHandler.xpos() * (double) Minecraft.getInstance().getWindow().getGuiScaledWidth() / (double) Minecraft.getInstance().getWindow().getScreenWidth());
-			int mouseY = (int) (Minecraft.getInstance().mouseHandler.ypos() * (double) Minecraft.getInstance().getWindow().getGuiScaledHeight() / (double) Minecraft.getInstance().getWindow().getScreenHeight());
+		while (sortKeyMapping.consumeClick()) {
+			if (Minecraft.getInstance().screen instanceof AbstractContainerScreen<?> containerScreen) {
+				int mouseX = (int) (Minecraft.getInstance().mouseHandler.xpos() * (double) Minecraft.getInstance().getWindow().getGuiScaledWidth() / (double) Minecraft.getInstance().getWindow().getScreenWidth());
+				int mouseY = (int) (Minecraft.getInstance().mouseHandler.ypos() * (double) Minecraft.getInstance().getWindow().getGuiScaledHeight() / (double) Minecraft.getInstance().getWindow().getScreenHeight());
 
-			Slot slot = ((AbstractContainerScreenAccessor) containerScreen).invokeGetHoveredSlot(mouseX, mouseY);
-			if (slot == null) {
-				return;
+				Slot slot = ((AbstractContainerScreenAccessor) containerScreen).invokeGetHoveredSlot(mouseX, mouseY);
+				if (slot == null) {
+					return;
+				}
+
+				sortOnEitherSide(Minecraft.getInstance().player.containerMenu, slot);
 			}
-
-			sortOnEitherSide(Minecraft.getInstance().player.containerMenu, slot);
 		}
 	}
 
@@ -133,9 +138,19 @@ public class SortItOutClient {
 		}
 	}
 
+	// Make the keybind work in containers
 	private static EventResult keyReleased(Minecraft minecraft, Screen screen, KeyEvent ev) {
-		if (SORT_KEY_BINDING.matches(ev)) {
+		if (sortKeyMapping.matches(ev)) {
 			KeyMapping.click(InputConstants.Type.KEYSYM.getOrCreate(ev.key()));
+			return EventResult.interruptTrue();
+		}
+
+		return EventResult.pass();
+	}
+
+	private static EventResult mouseReleased(Minecraft minecraft, Screen screen, MouseButtonEvent ev) {
+		if (sortKeyMapping.matchesMouse(ev)) {
+			KeyMapping.click(InputConstants.Type.MOUSE.getOrCreate(ev.input()));
 			return EventResult.interruptTrue();
 		}
 
