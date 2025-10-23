@@ -1,2 +1,1 @@
-- Fix config syncing issue causing log spam on LAN servers.
-- Sort keybind now works when set to a mouse button (#15).
+Update to 1.21.10
