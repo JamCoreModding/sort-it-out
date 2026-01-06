@@ -29,7 +29,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
@@ -121,7 +121,7 @@ public class SortItOutClient {
 		}
 
 		if (isSlotIndexOverlayEnabled) {
-			ResourceLocation type;
+			Identifier type;
 
 			try {
 				type = BuiltInRegistries.MENU.getKey(screen.getMenu().getType());

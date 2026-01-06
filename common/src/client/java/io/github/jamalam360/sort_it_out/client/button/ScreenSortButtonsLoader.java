@@ -4,7 +4,7 @@ import io.github.jamalam360.sort_it_out.SortItOut;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -23,7 +23,7 @@ public class ScreenSortButtonsLoader extends SimpleJsonResourceReloadListener<Sc
 
 	@Nullable
 	public List<ScreenSortButton> getCustomButtonsForScreen(AbstractContainerScreen<?> screen) {
-		ResourceLocation id;
+		Identifier id;
 
 		try {
 			id = BuiltInRegistries.MENU.getKey(screen.getMenu().getType());
@@ -41,7 +41,7 @@ public class ScreenSortButtonsLoader extends SimpleJsonResourceReloadListener<Sc
 	}
 
 	@Override
-	protected void apply(Map<ResourceLocation, ScreenSortButtons> values, ResourceManager resourceManager, ProfilerFiller profiler) {
+	protected void apply(Map<Identifier, ScreenSortButtons> values, ResourceManager resourceManager, ProfilerFiller profiler) {
 		this.values = List.copyOf(values.values());
 		SortItOut.LOGGER.info("Loaded {} sort button locations", values.size());
 	}

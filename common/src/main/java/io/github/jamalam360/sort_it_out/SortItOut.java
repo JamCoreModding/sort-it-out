@@ -4,7 +4,7 @@ import io.github.jamalam360.jamlib.JamLib;
 import io.github.jamalam360.sort_it_out.command.SortItOutCommands;
 import io.github.jamalam360.sort_it_out.network.PacketHandlers;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -23,8 +23,8 @@ public class SortItOut {
 		PacketHandlers.register();
 	}
 
-	public static ResourceLocation id(String path) {
-		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+	public static Identifier id(String path) {
+		return Identifier.fromNamespaceAndPath(MOD_ID, path);
 	}
 
 	public static void playSortSound(Player player) {
