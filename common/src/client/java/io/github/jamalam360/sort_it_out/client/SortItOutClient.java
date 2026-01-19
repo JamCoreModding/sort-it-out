@@ -19,6 +19,7 @@ import io.github.jamalam360.sort_it_out.network.C2SRequestSortPacket;
 import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
 import io.github.jamalam360.sort_it_out.sort.ContainerSorterUtil;
 import io.github.jamalam360.sort_it_out.util.NetworkManager2;
+import io.github.jamalam360.sort_it_out.util.CreativeModeTabLookup;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -49,6 +50,7 @@ public class SortItOutClient {
 		KeyMappingRegistry.register(sortKeyMapping);
 		ClientTickEvent.CLIENT_LEVEL_POST.register(SortItOutClient::postLevelTick);
 		ClientPlayLifecycleEvents.JOIN.register((mc) -> CONFIG.get().sync());
+		ClientPlayLifecycleEvents.JOIN.register((mc) -> CreativeModeTabLookup.INSTANCE.build(mc.level));
 		ClientScreenInputEvent.KEY_RELEASED_PRE.register(SortItOutClient::keyReleased);
 		ClientScreenInputEvent.MOUSE_RELEASED_PRE.register(SortItOutClient::mouseReleased);
 		ClientGuiEvent.RENDER_CONTAINER_FOREGROUND.register(SortItOutClient::renderContainerForeground);
