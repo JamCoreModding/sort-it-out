@@ -53,6 +53,7 @@ public class SortItOutCommands {
 														.then(sortingComparator("comparator" + 1).executes(ctx -> setComparators(ctx, 2))
 																.then(sortingComparator("comparator" + 2).executes(ctx -> setComparators(ctx, 3))
 																		.then(sortingComparator("comparator" + 3).executes(ctx -> setComparators(ctx, 4))
+																				.then(sortingComparator("comparator" + 4).executes(ctx -> setComparators(ctx, 5)))
 																		)
 																)
 														)
