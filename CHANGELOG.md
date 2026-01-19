@@ -1,2 +1,1 @@
-- Fix config syncing issue causing log spam on LAN servers.
-- Sort keybind now works when set to a mouse button (#15).
+- Added option to sort by creative mode tab.
