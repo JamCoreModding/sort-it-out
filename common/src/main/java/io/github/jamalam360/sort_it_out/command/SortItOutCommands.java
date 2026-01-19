@@ -3,9 +3,11 @@ package io.github.jamalam360.sort_it_out.command;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import dev.architectury.event.events.common.CommandRegistrationEvent;
 import dev.architectury.networking.NetworkManager;
+import dev.architectury.platform.Platform;
 import io.github.jamalam360.jamlib.config.ConfigManager;
 import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
@@ -13,12 +15,23 @@ import io.github.jamalam360.sort_it_out.preference.UserPreferences;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 import static com.mojang.brigadier.arguments.BoolArgumentType.bool;
+import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 import static io.github.jamalam360.sort_it_out.command.Arguments.*;
 import static io.github.jamalam360.sort_it_out.command.CommandFeedback.*;
 import static net.minecraft.commands.Commands.argument;
@@ -27,6 +40,10 @@ import static net.minecraft.commands.Commands.literal;
 public class SortItOutCommands {
 	public static void register() {
 		CommandRegistrationEvent.EVENT.register(SortItOutCommands::registerCommands);
+
+		if (Platform.isDevelopmentEnvironment()) {
+			CommandRegistrationEvent.EVENT.register(SortItOutCommands::registerDevCommands);
+		}
 	}
 
 	private static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext register, Commands.CommandSelection selection) {
@@ -64,6 +81,19 @@ public class SortItOutCommands {
 												.executes(SortItOutCommands::setSlotSortingTrigger)
 										)
 								)
+						)
+		);
+	}
+
+	private static void registerDevCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext register, Commands.CommandSelection selection) {
+		dispatcher.register(
+				literal("sortitoutdev")
+						.then(
+								literal("barrel")
+										.then(
+												argument("size", integer(1, 27))
+														.executes(SortItOutCommands::spawnBarrel)
+										)
 						)
 		);
 	}
@@ -120,6 +150,35 @@ public class SortItOutCommands {
 
 		modifyConfig(ctx, (prefs) -> prefs.slotSortingTrigger = trigger);
 		ctx.getSource().sendSuccess(() -> formatSlotSortingTrigger(ctx), false);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	private static int spawnBarrel(CommandContext<CommandSourceStack> ctx) {
+		int size = IntegerArgumentType.getInteger(ctx, "size");
+		ServerPlayer player = ctx.getSource().getPlayer();
+		Level level = player.level();
+		level.setBlock(player.getOnPos(), Blocks.BARREL.defaultBlockState(), Block.UPDATE_ALL);
+		BarrelBlockEntity blockEntity = (BarrelBlockEntity) level.getBlockEntity(player.getOnPos());
+		List<Item> items = BuiltInRegistries.ITEM.stream().filter((i) -> i != Items.AIR).toList();
+
+		while (size != 0) {
+			int slot = 0;
+			while (!blockEntity.getItem(slot).isEmpty()) {
+				slot = level.random.nextInt(27);
+			}
+
+			Item item = items.get(level.random.nextInt(items.size()));
+			ItemStack stack = item.getDefaultInstance();
+
+			if (stack.getMaxStackSize() != 1) {
+				stack.setCount(level.random.nextInt(1, stack.getMaxStackSize()));
+			}
+
+			blockEntity.setItem(slot, stack);
+			size -= 1;
+		}
+
+		ctx.getSource().sendSuccess(() -> Component.literal("Spawned barrel"), false);
 		return Command.SINGLE_SUCCESS;
 	}
 }
