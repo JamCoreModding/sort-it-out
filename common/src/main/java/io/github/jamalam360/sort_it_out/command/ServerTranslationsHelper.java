@@ -35,6 +35,7 @@ public class ServerTranslationsHelper {
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.comparators.namespace", "By Namespace");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.comparators.count", "By Quantity");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.comparators.durability", "By Durability");
+		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.comparators.creative_tab", "By Creative Tab");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.slotSortingTrigger", "Slot Sorting Trigger");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.slotSortingTrigger.tooltip", "The action to use to trigger sorting (along with the keybind and sort buttons, if the mod is installed clientside)");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.slotSortingTrigger.press_offhand_key", "Press Offhand Swap Key (replaces vanilla behaviour)");

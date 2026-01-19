@@ -4,21 +4,22 @@ import io.github.jamalam360.sort_it_out.SortItOut;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CreativeModeTabLookup {
 	public static final CreativeModeTabLookup INSTANCE = new CreativeModeTabLookup();
-	private final HashMap<Item, CreativeModeTab> lookup;
+	private final Map<Item, CreativeModeTab> lookup;
 
 	private CreativeModeTabLookup() {
-		this.lookup = new HashMap<>();
+		this.lookup = new ConcurrentHashMap<>();
 	}
 
 	@Nullable
@@ -32,10 +33,15 @@ public class CreativeModeTabLookup {
 		for (Map.Entry<ResourceKey<CreativeModeTab>, CreativeModeTab> entry : BuiltInRegistries.CREATIVE_MODE_TAB.entrySet()) {
 			CreativeModeTab tab = entry.getValue();
 
+			if (tab.isAlignedRight() && entry.getKey() != CreativeModeTabs.OP_BLOCKS) {
+				continue;
+			}
+
 			try {
 				tab.buildContents(new CreativeModeTab.ItemDisplayParameters(level.enabledFeatures(), false, level.registryAccess()));
 			} catch (Exception e) {
 				SortItOut.LOGGER.error("Failed to build tab contents for {}", entry.getKey(), e);
+				continue;
 			}
 
 			this.associate(tab, tab.getDisplayItems());

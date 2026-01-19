@@ -16,9 +16,9 @@ public class Comparators {
 		CreativeModeTab tab = CreativeModeTabLookup.INSTANCE.lookup(stack);
 
 		if (tab == null) {
-			return "z";
+			return null;
 		} else {
 			return tab.getDisplayName().getString();
 		}
-	});
+	}, Comparator.nullsLast(String::compareTo));
 }
