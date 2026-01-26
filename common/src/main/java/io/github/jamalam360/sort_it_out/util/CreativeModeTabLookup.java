@@ -8,29 +8,31 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CreativeModeTabLookup {
 	public static final CreativeModeTabLookup INSTANCE = new CreativeModeTabLookup();
-	private final Map<Item, CreativeModeTab> lookup;
+	private static final int TAB_ORDER_FACTOR = 100_000;
+	private final Map<Item, Integer> lookup;
 
 	private CreativeModeTabLookup() {
 		this.lookup = new ConcurrentHashMap<>();
 	}
 
-	@Nullable
-	public CreativeModeTab lookup(ItemStack stack) {
-		return this.lookup.get(stack.getItem());
+	public int getOrder(ItemStack stack) {
+		return this.lookup.getOrDefault(stack.getItem(), 0);
 	}
 
-	public void build(Level level) {
+	public void buildLookup(Level level) {
 		this.lookup.clear();
 
-		for (Map.Entry<ResourceKey<CreativeModeTab>, CreativeModeTab> entry : BuiltInRegistries.CREATIVE_MODE_TAB.entrySet()) {
+		List<Map.Entry<ResourceKey<CreativeModeTab>, CreativeModeTab>> entries = new ArrayList<>(BuiltInRegistries.CREATIVE_MODE_TAB.entrySet());
+		for (int i = 0; i < entries.size(); i++) {
+			Map.Entry<ResourceKey<CreativeModeTab>, CreativeModeTab> entry = entries.get(i);
 			CreativeModeTab tab = entry.getValue();
 
 			if (tab.isAlignedRight() && entry.getKey() != CreativeModeTabs.OP_BLOCKS) {
@@ -44,19 +46,17 @@ public class CreativeModeTabLookup {
 				continue;
 			}
 
-			this.associate(tab, tab.getDisplayItems());
+			List<ItemStack> displayItems = new ArrayList<>(tab.getDisplayItems());
+			for (int j = 0; j < displayItems.size(); j++) {
+				ItemStack stack = displayItems.get(j);
+				if (this.lookup.containsKey(stack.getItem())) {
+					continue;
+				}
+
+				this.lookup.put(stack.getItem(), i * TAB_ORDER_FACTOR + j);
+			}
 		}
 
 		SortItOut.LOGGER.info("Built creative tab lookup with {} entries", this.lookup.size());
-	}
-
-	private void associate(CreativeModeTab tab, Collection<ItemStack> displayItems) {
-		for (ItemStack stack : displayItems) {
-			if (this.lookup.containsKey(stack.getItem())) {
-				continue;
-			}
-
-			this.lookup.put(stack.getItem(), tab);
-		}
 	}
 }

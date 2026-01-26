@@ -23,7 +23,7 @@ public class SortItOut {
 		JamLib.checkForJarRenaming(SortItOut.class);
 		SortItOutCommands.register();
 		PacketHandlers.register();
-		LifecycleEvent.SERVER_STARTED.register((server) -> CreativeModeTabLookup.INSTANCE.build(server.overworld()));
+		LifecycleEvent.SERVER_STARTED.register((server) -> CreativeModeTabLookup.INSTANCE.buildLookup(server.overworld()));
 	}
 
 	public static Identifier id(String path) {
