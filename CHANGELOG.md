@@ -1,1 +1,1 @@
-- Added option to sort by creative mode tab.
+- Respect item ordering within creative mode tabs when sorting.
