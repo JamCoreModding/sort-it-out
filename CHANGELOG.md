@@ -1,2 +1,2 @@
-- Remove sort buttons from Traveler's Backpack screens (#22 - see #23 for full support in future).
+- Remove sort buttons from Traveler's and Sophisticated Backpack screens (#22 - see #23 for full support in future).
 - Fix bundles when client sorting (#19).
