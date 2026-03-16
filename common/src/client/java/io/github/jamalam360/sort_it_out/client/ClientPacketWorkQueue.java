@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.HashedStack;
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
@@ -82,11 +83,19 @@ public class ClientPacketWorkQueue {
 					this.menu().containerId,
 					this.menu().getStateId(),
 					Shorts.checkedCast(this.slot()),
-					SignedBytes.checkedCast(GLFW.GLFW_MOUSE_BUTTON_LEFT),
+					SignedBytes.checkedCast(getPlaceButton(newSlotItem, newCarriedItem)),
 					ClickType.PICKUP,
 					Int2ObjectMaps.singleton(this.slot(), HashedStack.create(this.newSlotItem(), Minecraft.getInstance().getConnection().decoratedHashOpsGenenerator())),
 					HashedStack.create(this.newCarriedItem(), Minecraft.getInstance().getConnection().decoratedHashOpsGenenerator())
 			);
+		}
+
+		private static int getPlaceButton(ItemStack stack1, ItemStack stack2) {
+			if ((stack1.is(ItemTags.BUNDLES) && !stack2.isEmpty()) || (stack2.is(ItemTags.BUNDLES) && !stack1.isEmpty())) {
+				return GLFW.GLFW_MOUSE_BUTTON_RIGHT;
+			} else {
+				return GLFW.GLFW_MOUSE_BUTTON_LEFT;
+			}
 		}
 	}
 }
