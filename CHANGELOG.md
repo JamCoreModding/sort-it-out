@@ -1,1 +1,1 @@
-- Respect item ordering within creative mode tabs when sorting.
+- Remove sort buttons from Traveler's Backpack screens (#22 - see #23 for full support in future).
