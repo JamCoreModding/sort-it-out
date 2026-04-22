@@ -21,11 +21,12 @@ public class UserPreferences {
 
 		for (SortingComparator sortingComparator : this.comparators) {
 			Comparator<ItemStack> chain = switch (sortingComparator) {
-				case DISPLAY_NAME -> Comparators.DISPLAY_NAME;
-				case CREATIVE_TAB -> Comparators.CREATIVE_TAB;
-				case NAMESPACE -> Comparators.NAMESPACE;
 				case COUNT -> Comparators.COUNT;
+				case CREATIVE_TAB -> Comparators.CREATIVE_TAB;
+				case DISPLAY_NAME -> Comparators.DISPLAY_NAME;
 				case DURABILITY -> Comparators.DURABILITY;
+				case ENCHANTMENTS -> Comparators.ENCHANTMENTS;
+				case NAMESPACE -> Comparators.NAMESPACE;
 			};
 
 			comparator = comparator.thenComparing(chain);
@@ -36,11 +37,12 @@ public class UserPreferences {
 
 	// When adding a new comparator, ensure that the command chain is long enough in {@link SortItOutCommands}
 	public enum SortingComparator {
-		DISPLAY_NAME,
-		CREATIVE_TAB,
-		NAMESPACE,
 		COUNT,
-		DURABILITY
+		CREATIVE_TAB,
+		DISPLAY_NAME,
+		DURABILITY,
+		NAMESPACE,
+		ENCHANTMENTS
 	}
 
 	public enum SlotSortingTrigger {
