@@ -10,12 +10,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CreativeModeTabLookup {
 	public static final CreativeModeTabLookup INSTANCE = new CreativeModeTabLookup();
+	private static final Comparator<Map.Entry<ResourceKey<CreativeModeTab>, CreativeModeTab>> ALPHABETICALLY = Comparator.comparing(entry -> entry.getKey().location().toString());
 	private static final int TAB_ORDER_FACTOR = 100_000;
 	private final Map<Item, Integer> lookup;
 
@@ -30,7 +32,7 @@ public class CreativeModeTabLookup {
 	public void buildLookup(Level level) {
 		this.lookup.clear();
 
-		List<Map.Entry<ResourceKey<CreativeModeTab>, CreativeModeTab>> entries = new ArrayList<>(BuiltInRegistries.CREATIVE_MODE_TAB.entrySet());
+		List<Map.Entry<ResourceKey<CreativeModeTab>, CreativeModeTab>> entries = BuiltInRegistries.CREATIVE_MODE_TAB.entrySet().stream().sorted(ALPHABETICALLY).toList();
 		for (int i = 0; i < entries.size(); i++) {
 			Map.Entry<ResourceKey<CreativeModeTab>, CreativeModeTab> entry = entries.get(i);
 			CreativeModeTab tab = entry.getValue();
