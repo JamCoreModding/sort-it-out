@@ -1,2 +1,4 @@
-- Remove sort buttons from Traveler's and Sophisticated Backpack screens (#22 - see #23 for full support in future).
-- Fix bundles when client sorting (#19).
+- Sort Creative Tabs alphabetically in the Creative Inventory.
+- Add an enchantment sorting comparator.
+
+Both contributed by [unilock](https://github.com/unilock) in [#25](https://github.com/JamCoreModding/sort-it-out/pull/25). Thanks!
