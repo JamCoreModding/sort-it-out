@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CreativeModeTabLookup {
 	public static final CreativeModeTabLookup INSTANCE = new CreativeModeTabLookup();
-	private static final Comparator<Map.Entry<ResourceKey<CreativeModeTab>, CreativeModeTab>> ALPHABETICALLY = Comparator.comparing(entry -> entry.getKey().location().toString());
+	private static final Comparator<Map.Entry<ResourceKey<CreativeModeTab>, CreativeModeTab>> ALPHABETICALLY = Comparator.comparing(entry -> entry.getKey().identifier().toString());
 	private static final int TAB_ORDER_FACTOR = 100_000;
 	private final Map<Item, Integer> lookup;
 
