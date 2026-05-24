@@ -49,7 +49,6 @@ public class ClientSortWorker {
 	}
 
 	public void push(ClickAction action) {
-		System.out.println(action);
 		queue.offer(action);
 	}
 

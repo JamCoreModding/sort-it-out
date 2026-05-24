@@ -1,1 +1,1 @@
-- Rewrite client sorting to operate on a separate thread (closes #21).
+- Remove debugging logging.
