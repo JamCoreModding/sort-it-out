@@ -99,7 +99,6 @@ public class ClientSortableContainer implements SortableContainer {
 
 	private void moveStack(int src, int dst) {
 		ItemStack item = this.getItem(src).copy();
-		System.out.println("Moving " + item + " from slot " + src + " to slot " + dst);
 		this.pickup(src, item);
 		this.place(dst, item);
 	}
