@@ -26,7 +26,7 @@ public class ServerTranslationsHelper {
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.discord", "Chat on Discord");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.github", "Report Issues on GitHub");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.packetSendInterval", "Packet Send Interval");
-		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.packetSendInterval.tooltip", "The interval, in ticks, at which to send packets to the server when sorting client side. Too low of a value could cause you to be kicked from the server.");
+		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.packetSendInterval.tooltip", "The interval, in milliseconds, at which to send packets to the server when sorting client side. Too low of a value could cause you to be kicked from the server.");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.invertSorting", "Invert Sorting Order");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.comparators", "Comparators");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.comparators.tooltip", "A list of indicators to use when comparing items for sorting. If the first comparator says two items are equal, the next comparator will be used (and so on if that says they are equal).");

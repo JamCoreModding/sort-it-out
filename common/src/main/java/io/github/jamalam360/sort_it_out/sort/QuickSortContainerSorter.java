@@ -15,6 +15,7 @@ public class QuickSortContainerSorter implements ContainerSorter {
 	public void sort(SortableContainer container, int startIndex, int containerSize, UserPreferences preferences) {
 		this.mergeStacks(container, startIndex, containerSize);
 		quickSort(container, startIndex, startIndex + containerSize - 1, preferences.createComparator());
+		container.afterSort();
 	}
 
 	private static void quickSort(SortableContainer container, int low, int high, Comparator<ItemStack> comparator) {

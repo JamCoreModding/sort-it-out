@@ -1,8 +1,8 @@
 package io.github.jamalam360.sort_it_out.client.gui;
 
 import io.github.jamalam360.sort_it_out.SortItOut;
-import io.github.jamalam360.sort_it_out.client.ClientPacketWorkQueue;
 import io.github.jamalam360.sort_it_out.client.SortItOutClient;
+import io.github.jamalam360.sort_it_out.client.worker.ClientSortWorker;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.SpriteIconButton;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -32,7 +32,7 @@ public class SortButton extends SpriteIconButton.CenteredIcon {
 
 	private static void onPress(Button button) {
 		if (button instanceof SortButton sortButton) {
-			if (ClientPacketWorkQueue.INSTANCE.hasWorkRemaining()) {
+			if (ClientSortWorker.INSTANCE.isWorking()) {
 				return;
 			}
 

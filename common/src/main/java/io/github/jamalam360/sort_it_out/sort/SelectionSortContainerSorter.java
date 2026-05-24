@@ -26,5 +26,7 @@ public class SelectionSortContainerSorter implements ContainerSorter {
 
 			container.swapStacks(j, min);
 		}
+
+		container.afterSort();
 	}
 }
