@@ -14,6 +14,7 @@ import io.github.jamalam360.jamlib.events.client.ClientPlayLifecycleEvents;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import io.github.jamalam360.sort_it_out.client.button.ScreenSortButtonsLoader;
 import io.github.jamalam360.sort_it_out.client.mixin.AbstractContainerScreenAccessor;
+import io.github.jamalam360.sort_it_out.client.worker.ClientSortWorker;
 import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import io.github.jamalam360.sort_it_out.network.C2SRequestSortPacket;
 import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
@@ -83,7 +84,7 @@ public class SortItOutClient {
 	public static void sortOnEitherSide(AbstractContainerMenu menu, Slot slot) {
 		if (NetworkManager.canServerReceive(C2SRequestSortPacket.TYPE) && !isClientSortingForced) {
 			NetworkManager.sendToServer(new C2SRequestSortPacket(menu.containerId, slot.index));
-		} else if (!ClientPacketWorkQueue.INSTANCE.hasWorkRemaining()) {
+		} else if (!ClientSortWorker.INSTANCE.isWorking()) {
 			ContainerSorterUtil.sortWithSelectionSort(slot.container, new ClientSortableContainer(slot.container), CONFIG.get());
 		} else {
 			return;
@@ -93,8 +94,6 @@ public class SortItOutClient {
 	}
 
 	private static void postLevelTick(ClientLevel level) {
-		ClientPacketWorkQueue.INSTANCE.tick();
-
 		while (sortKeyMapping.consumeClick()) {
 			if (Minecraft.getInstance().screen instanceof AbstractContainerScreen<?> containerScreen) {
 				int mouseX = (int) (Minecraft.getInstance().mouseHandler.xpos() * (double) Minecraft.getInstance().getWindow().getGuiScaledWidth() / (double) Minecraft.getInstance().getWindow().getScreenWidth());
@@ -119,15 +118,6 @@ public class SortItOutClient {
 	}
 
 	private static void renderContainerForeground(AbstractContainerScreen<?> screen, GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-		if (ClientPacketWorkQueue.INSTANCE.hasWorkRemaining()) {
-			Font font = Minecraft.getInstance().font;
-			Component component = Component.translatable("text.sort_it_out.sort_in_progress");
-			graphics.pose().pushPose();
-			graphics.pose().translate(0, -((AbstractContainerScreenAccessor) screen).getTopPos(), 0);
-			graphics.drawCenteredString(font, component, ((AbstractContainerScreenAccessor) screen).getImageWidth() / 2, 6, 0xFFFFFF);
-			graphics.pose().popPose();
-		}
-
 		if (isSlotIndexOverlayEnabled) {
 			ResourceLocation type;
 

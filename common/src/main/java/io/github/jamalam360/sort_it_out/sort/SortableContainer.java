@@ -7,4 +7,5 @@ public interface SortableContainer {
 	ItemStack getItem(int i);
 	void mergeStacks(int destination, int source);
 	void swapStacks(int a, int b);
+	default void afterSort() {}
 }
