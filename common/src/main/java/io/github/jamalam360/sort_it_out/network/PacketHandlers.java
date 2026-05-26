@@ -11,6 +11,7 @@ import net.minecraft.world.Container;
 
 public class PacketHandlers {
 	public static void register() {
+		NetworkManager.registerS2CPayloadType(BidirectionalUserPreferencesUpdatePacket.S2C.TYPE, BidirectionalUserPreferencesUpdatePacket.S2C.STREAM_CODEC);
 		NetworkManager.registerReceiver(NetworkManager.Side.C2S, BidirectionalUserPreferencesUpdatePacket.C2S.TYPE, BidirectionalUserPreferencesUpdatePacket.C2S.STREAM_CODEC, (prefs, ctx) -> {
 			ConfigManager<UserPreferences> configManager = ServerUserPreferences.INSTANCE.getPlayerConfigManager(ctx.getPlayer());
 			configManager.get().invertSorting = prefs.preferences().invertSorting;
