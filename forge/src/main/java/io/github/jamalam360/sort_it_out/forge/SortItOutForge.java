@@ -10,6 +10,6 @@ import net.minecraftforge.fml.common.Mod;
 public class SortItOutForge {
     public SortItOutForge() {
         SortItOut.init();
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> SortItOutClient::init);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> SortItOutClient::init);
     }
 }
