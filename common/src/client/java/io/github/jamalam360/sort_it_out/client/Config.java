@@ -40,7 +40,7 @@ public class Config extends UserPreferences implements ConfigExtensions<Config> 
 	@Override
 	public void afterSave() {
 		// Only sync when in game
-		if (Minecraft.getInstance().level != null) {
+		if (Minecraft.getInstance() != null && Minecraft.getInstance().level != null) {
 			if (SortItOutClient.justReceivedFromServer) {
 				SortItOutClient.justReceivedFromServer = false;
 			} else {
