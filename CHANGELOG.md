@@ -1,1 +1,1 @@
-- Remove debugging logging.
+- Sync slot sorting trigger preference (#26).

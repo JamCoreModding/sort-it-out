@@ -13,12 +13,14 @@ public class BidirectionalUserPreferencesUpdatePacket {
 	private static final StreamCodec<RegistryFriendlyByteBuf, UserPreferences> BASE_STREAM_CODEC = StreamCodec.of(
 			(buf, prefs) -> {
 				buf.writeBoolean(prefs.invertSorting);
+				buf.writeEnum(prefs.slotSortingTrigger);
 				buf.writeInt(prefs.comparators.size());
 				prefs.comparators.forEach(buf::writeEnum);
 			},
 			(buf) -> {
 				UserPreferences prefs = new UserPreferences();
 				prefs.invertSorting = buf.readBoolean();
+				prefs.slotSortingTrigger = buf.readEnum(UserPreferences.SlotSortingTrigger.class);
 				int size = buf.readInt();
 				prefs.comparators = new ArrayList<>(size);
 				for (int i = 0; i < size; i++) {
