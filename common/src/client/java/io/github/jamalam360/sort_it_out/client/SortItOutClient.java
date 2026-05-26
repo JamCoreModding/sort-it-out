@@ -40,6 +40,7 @@ import static dev.architectury.event.events.client.ClientCommandRegistrationEven
 
 public class SortItOutClient {
 	public static final ConfigManager<Config> CONFIG = new ConfigManager<>(SortItOut.MOD_ID, "client_preferences", Config.class);
+	public static boolean justReceivedFromServer = false;
 	private static KeyMapping sortKeyMapping;
 	private static boolean isClientSortingForced = false;
 	private static boolean isSlotIndexOverlayEnabled = false;
@@ -57,6 +58,7 @@ public class SortItOutClient {
 		ClientGuiEvent.RENDER_CONTAINER_FOREGROUND.register(SortItOutClient::renderContainerForeground);
 
 		NetworkManager.registerReceiver(NetworkManager.Side.S2C, BidirectionalUserPreferencesUpdatePacket.S2C.TYPE, BidirectionalUserPreferencesUpdatePacket.S2C.STREAM_CODEC, (prefs, ctx) -> {
+			justReceivedFromServer = true;
 			CONFIG.get().invertSorting = prefs.preferences().invertSorting;
 			CONFIG.get().comparators = prefs.preferences().comparators;
 			CONFIG.save();
