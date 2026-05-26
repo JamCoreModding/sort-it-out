@@ -17,7 +17,7 @@ public class PacketHandlers {
 			configManager.get().invertSorting = prefs.preferences().invertSorting;
 			configManager.get().comparators = prefs.preferences().comparators;
 			configManager.save();
-			SortItOut.LOGGER.info("Received updated preferences from client");
+			SortItOut.LOGGER.info("Received updated preferences from client {}", ctx.getPlayer().getStringUUID());
 		});
 
 		NetworkManager.registerReceiver(NetworkManager.Side.C2S, C2SRequestSortPacket.TYPE.location(), (buf, ctx) -> {
