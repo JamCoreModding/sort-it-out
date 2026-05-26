@@ -14,7 +14,7 @@ fabric-loader = "0.16.10"
 fabric-api = "0.92.4+1.20.1"
 
 # https://maven.jamalam.tech/#/releases
-jamlib = "1.3.2+1.20.1"
+jamlib = "1.3.6+1.20.1-DEBUG.4"
 
 # https://modrinth.com/mod/modmenu/versions
 modmenu = "7.2.2"
