@@ -44,6 +44,7 @@ public class SortItOutClient {
 	private static KeyMapping sortKeyMapping;
 	private static boolean isClientSortingForced = false;
 	private static boolean isSlotIndexOverlayEnabled = false;
+	private static int ticksUntilInitialSync = -1;
 
 	public static void init() {
 		ServerUserPreferences.INSTANCE.setClientUserPreferences(CONFIG);
@@ -51,7 +52,7 @@ public class SortItOutClient {
 		sortKeyMapping = new KeyMapping("key.sort_it_out.sort", GLFW.GLFW_KEY_I, "category.sort_it_out");
 		KeyMappingRegistry.register(sortKeyMapping);
 		ClientTickEvent.CLIENT_LEVEL_POST.register(SortItOutClient::postLevelTick);
-		ClientPlayLifecycleEvents.JOIN.register((mc) -> CONFIG.get().sync());
+		ClientPlayLifecycleEvents.JOIN.register((mc) -> ticksUntilInitialSync = 60); // Gives the server and client 3s to handshake
 		ClientPlayLifecycleEvents.JOIN.register((mc) -> CreativeModeTabLookup.INSTANCE.buildLookup(mc.level));
 		ClientScreenInputEvent.KEY_RELEASED_PRE.register(SortItOutClient::keyReleased);
 		ClientScreenInputEvent.MOUSE_RELEASED_PRE.register(SortItOutClient::mouseReleased);
@@ -61,9 +62,14 @@ public class SortItOutClient {
 			justReceivedFromServer = true;
 			BidirectionalUserPreferencesUpdatePacket.S2C prefs = BidirectionalUserPreferencesUpdatePacket.S2C.STREAM_CODEC.decode(buf);
 			CONFIG.get().invertSorting = prefs.preferences().invertSorting;
+			CONFIG.get().slotSortingTrigger = prefs.preferences().slotSortingTrigger;
 			CONFIG.get().comparators = prefs.preferences().comparators;
 			CONFIG.save();
 			SortItOut.LOGGER.info("Received updated preferences from server (via config-edit commands)");
+		});
+
+		// Workaround for architectury/architectury-api#715
+		NetworkManager.registerReceiver(NetworkManager.Side.C2S, BidirectionalUserPreferencesUpdatePacket.S2C.TYPE.location(), (buf, ctx) -> {
 		});
 
 		ClientCommandRegistrationEvent.EVENT.register(((dispatcher, context) -> dispatcher.register(
@@ -110,6 +116,14 @@ public class SortItOutClient {
 
 				sortOnEitherSide(Minecraft.getInstance().player.containerMenu, slot);
 			}
+		}
+
+		if (ticksUntilInitialSync > 0) {
+			ticksUntilInitialSync--;
+		} else if (ticksUntilInitialSync == 0) {
+			SortItOut.LOGGER.info("Sending initial preference sync packet");
+			CONFIG.get().sync();
+			ticksUntilInitialSync = -1;
 		}
 	}
 
