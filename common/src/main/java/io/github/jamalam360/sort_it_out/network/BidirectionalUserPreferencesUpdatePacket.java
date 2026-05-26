@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 public class BidirectionalUserPreferencesUpdatePacket {
+	// TODO: version this
 	private static final StreamCodec<RegistryFriendlyByteBuf, UserPreferences> BASE_STREAM_CODEC = StreamCodec.of(
 			(buf, prefs) -> {
 				buf.writeBoolean(prefs.invertSorting);
