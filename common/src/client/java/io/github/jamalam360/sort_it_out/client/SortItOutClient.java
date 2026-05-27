@@ -121,7 +121,6 @@ public class SortItOutClient {
 		if (ticksUntilInitialSync > 0) {
 			ticksUntilInitialSync--;
 		} else if (ticksUntilInitialSync == 0) {
-			SortItOut.LOGGER.info("Sending initial preference sync packet");
 			CONFIG.get().sync();
 			ticksUntilInitialSync = -1;
 		}
