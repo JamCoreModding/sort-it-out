@@ -8,7 +8,7 @@ modId = "sort_it_out"
 version = "${version}"
 displayName = "Sort It Out!"
 displayURL="https://github.com/JamCoreModding/sort-it-out"
-logoFile = "icon.png"
+logoFile = "assets/sort_it_out/icon.png"
 authors = "Jamalam"
 description = '''
 A capable inventory sorting mod that works either client-side or server-side
@@ -26,13 +26,6 @@ modId = "minecraft"
 type = "required"
 versionRange = "[${minecraft_version},)"
 ordering = "NONE"
-side = "BOTH"
-
-[[dependencies.sort_it_out]]
-modId = "architectury"
-type = "required"
-versionRange = "[${architectury_version},)"
-ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.sort_it_out]]

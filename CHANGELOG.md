@@ -1,2 +1,1 @@
-- Sync slot sorting trigger preference (#26).
-- Prevent double-syncs when updating preferences server side.
+- Update to 26.1.x
