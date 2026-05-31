@@ -31,11 +31,11 @@ public class SortItOut {
 	}
 
 	public static void playSortSound(Player player) {
-		float vol = 0.4f + (0.5f * player.level().random.nextFloat());
-		float pitch = 0.75f + (0.5f * player.level().random.nextFloat());
+		float vol = 0.4f + (0.5f * player.level().getRandom().nextFloat());
+		float pitch = 0.75f + (0.5f * player.level().getRandom().nextFloat());
 
 		if (player instanceof ServerPlayer serverPlayer) {
-			serverPlayer.connection.send(new ClientboundSoundPacket(SoundEvents.UI_BUTTON_CLICK, SoundSource.BLOCKS, player.getX(), player.getY(), player.getZ(), vol, pitch, player.level().random.nextLong()));
+			serverPlayer.connection.send(new ClientboundSoundPacket(SoundEvents.UI_BUTTON_CLICK, SoundSource.BLOCKS, player.getX(), player.getY(), player.getZ(), vol, pitch, player.level().getRandom().nextLong()));
 		} else {
 			player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), vol, pitch);
 		}

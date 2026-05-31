@@ -165,14 +165,14 @@ public class SortItOutCommands {
 		while (size != 0) {
 			int slot = 0;
 			while (!blockEntity.getItem(slot).isEmpty()) {
-				slot = level.random.nextInt(27);
+				slot = level.getRandom().nextInt(27);
 			}
 
-			Item item = items.get(level.random.nextInt(items.size()));
+			Item item = items.get(level.getRandom().nextInt(items.size()));
 			ItemStack stack = item.getDefaultInstance();
 
 			if (stack.getMaxStackSize() != 1) {
-				stack.setCount(level.random.nextInt(1, stack.getMaxStackSize()));
+				stack.setCount(level.getRandom().nextInt(1, stack.getMaxStackSize()));
 			}
 
 			blockEntity.setItem(slot, stack);

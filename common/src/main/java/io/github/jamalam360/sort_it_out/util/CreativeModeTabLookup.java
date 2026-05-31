@@ -2,9 +2,9 @@ package io.github.jamalam360.sort_it_out.util;
 
 import io.github.jamalam360.sort_it_out.SortItOut;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CreativeModeTabLookup {
 	public static final CreativeModeTabLookup INSTANCE = new CreativeModeTabLookup();
+	private static final Identifier OP_BLOCKS = Identifier.withDefaultNamespace("op_blocks");
 	private static final Comparator<Map.Entry<ResourceKey<CreativeModeTab>, CreativeModeTab>> ALPHABETICALLY = Comparator.comparing(entry -> entry.getKey().identifier().toString());
 	private static final int TAB_ORDER_FACTOR = 100_000;
 	private final Map<Item, Integer> lookup;
@@ -37,7 +38,7 @@ public class CreativeModeTabLookup {
 			Map.Entry<ResourceKey<CreativeModeTab>, CreativeModeTab> entry = entries.get(i);
 			CreativeModeTab tab = entry.getValue();
 
-			if (tab.isAlignedRight() && entry.getKey() != CreativeModeTabs.OP_BLOCKS) {
+			if (tab.isAlignedRight() && !entry.getKey().identifier().equals(OP_BLOCKS)) {
 				continue;
 			}
 
