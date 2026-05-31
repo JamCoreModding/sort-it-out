@@ -5,10 +5,10 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import dev.architectury.event.events.common.CommandRegistrationEvent;
-import dev.architectury.networking.NetworkManager;
-import dev.architectury.platform.Platform;
 import io.github.jamalam360.jamlib.api.config.ConfigManager;
+import io.github.jamalam360.jamlib.api.events.CommandRegistrationEvent;
+import io.github.jamalam360.jamlib.api.network.Network;
+import io.github.jamalam360.jamlib.api.platform.Platform;
 import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
@@ -39,10 +39,10 @@ import static net.minecraft.commands.Commands.literal;
 
 public class SortItOutCommands {
 	public static void register() {
-		CommandRegistrationEvent.EVENT.register(SortItOutCommands::registerCommands);
+		CommandRegistrationEvent.EVENT.listen(SortItOutCommands::registerCommands);
 
 		if (Platform.isDevelopmentEnvironment()) {
-			CommandRegistrationEvent.EVENT.register(SortItOutCommands::registerDevCommands);
+			CommandRegistrationEvent.EVENT.listen(SortItOutCommands::registerDevCommands);
 		}
 	}
 
@@ -104,8 +104,8 @@ public class SortItOutCommands {
 		modifier.accept(manager.get());
 		manager.save();
 
-		if (ctx.getSource().getPlayer() != null && NetworkManager.canPlayerReceive(ctx.getSource().getPlayer(), BidirectionalUserPreferencesUpdatePacket.S2C.TYPE)) {
-			NetworkManager.sendToPlayer(ctx.getSource().getPlayer(), new BidirectionalUserPreferencesUpdatePacket.S2C(manager.get()));
+		if (ctx.getSource().getPlayer() != null && Network.getPlayerCapability(ctx.getSource().getPlayer()).canReceive(BidirectionalUserPreferencesUpdatePacket.S2C.TYPE)) {
+			Network.sendToClient(ctx.getSource().getPlayer(), BidirectionalUserPreferencesUpdatePacket.S2C.TYPE, new BidirectionalUserPreferencesUpdatePacket.S2C(manager.get()));
 		}
 	}
 

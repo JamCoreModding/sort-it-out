@@ -1,34 +1,32 @@
 package io.github.jamalam360.sort_it_out.network;
 
-import dev.architectury.networking.NetworkManager;
-import dev.architectury.platform.Platform;
 import io.github.jamalam360.jamlib.api.config.ConfigManager;
+import io.github.jamalam360.jamlib.api.network.Network;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
 import io.github.jamalam360.sort_it_out.sort.ContainerSorterUtil;
 import io.github.jamalam360.sort_it_out.sort.ServerSortableContainer;
-import net.fabricmc.api.EnvType;
 import net.minecraft.world.Container;
 
 public class PacketHandlers {
 	public static void register() {
-		if (Platform.getEnv() == EnvType.SERVER) {
-			NetworkManager.registerS2CPayloadType(BidirectionalUserPreferencesUpdatePacket.S2C.TYPE, BidirectionalUserPreferencesUpdatePacket.S2C.STREAM_CODEC);
-		}
+		Network.registerPayloadType(BidirectionalUserPreferencesUpdatePacket.S2C.TYPE, BidirectionalUserPreferencesUpdatePacket.S2C.Type.INSTANCE);
+		Network.registerPayloadType(BidirectionalUserPreferencesUpdatePacket.C2S.TYPE, BidirectionalUserPreferencesUpdatePacket.C2S.Type.INSTANCE);
+		Network.registerPayloadType(C2SRequestSortPacket.TYPE, C2SRequestSortPacket.Type.INSTANCE);
 
-		NetworkManager.registerReceiver(NetworkManager.Side.C2S, BidirectionalUserPreferencesUpdatePacket.C2S.TYPE, BidirectionalUserPreferencesUpdatePacket.C2S.STREAM_CODEC, (prefs, ctx) -> {
-			ConfigManager<UserPreferences> configManager = ServerUserPreferences.INSTANCE.getPlayerConfigManager(ctx.getPlayer());
+		Network.registerHandler(Network.Direction.SERVER_BOUND, BidirectionalUserPreferencesUpdatePacket.C2S.TYPE, (ctx, prefs) -> {
+			ConfigManager<UserPreferences> configManager = ServerUserPreferences.INSTANCE.getPlayerConfigManager(ctx.player());
 			configManager.get().invertSorting = prefs.preferences().invertSorting;
 			configManager.get().comparators = prefs.preferences().comparators;
 			configManager.save();
-			SortItOut.LOGGER.info("Received updated preferences from client {}", ctx.getPlayer().getStringUUID());
+			SortItOut.LOGGER.info("Received updated preferences from client {}", ctx.player().getStringUUID());
 		});
 
-		NetworkManager.registerReceiver(NetworkManager.Side.C2S, C2SRequestSortPacket.TYPE, C2SRequestSortPacket.STREAM_CODEC, (packet, ctx) -> {
-			if (ctx.getPlayer().containerMenu.containerId == packet.containerId()) {
-				Container container = ctx.getPlayer().containerMenu.slots.get(packet.slotIndex()).container;
-				ContainerSorterUtil.sortWithQuickSort(container, new ServerSortableContainer(container), ServerUserPreferences.INSTANCE.getPlayerPreferences(ctx.getPlayer()));
+		Network.registerHandler(Network.Direction.SERVER_BOUND, C2SRequestSortPacket.TYPE, (ctx, packet) -> {
+			if (ctx.player().containerMenu.containerId == packet.containerId()) {
+				Container container = ctx.player().containerMenu.slots.get(packet.slotIndex()).container;
+				ContainerSorterUtil.sortWithQuickSort(container, new ServerSortableContainer(container), ServerUserPreferences.INSTANCE.getPlayerPreferences(ctx.player()));
 			}
 		});
 	}

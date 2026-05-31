@@ -1,10 +1,8 @@
 package io.github.jamalam360.sort_it_out;
 
-import dev.architectury.event.events.common.LifecycleEvent;
 import io.github.jamalam360.jamlib.JamLib;
 import io.github.jamalam360.sort_it_out.command.SortItOutCommands;
 import io.github.jamalam360.sort_it_out.network.PacketHandlers;
-import io.github.jamalam360.sort_it_out.util.CreativeModeTabLookup;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,7 +21,7 @@ public class SortItOut {
 		JamLib.checkForJarRenaming(SortItOut.class);
 		SortItOutCommands.register();
 		PacketHandlers.register();
-		LifecycleEvent.SERVER_STARTED.register((server) -> CreativeModeTabLookup.INSTANCE.buildLookup(server.overworld()));
+//		LifecycleEvent.SERVER_STARTED.register((server) -> CreativeModeTabLookup.INSTANCE.buildLookup(server.overworld()));
 	}
 
 	public static Identifier id(String path) {

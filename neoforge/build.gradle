@@ -34,7 +34,7 @@ dependencies {
     // Dependency of JamLib
     forgeRuntimeLibrary "blue.endless:jankson:1.2.3"
 
-    common(project(":common")) { transitive false }
+    common(project(path: ":common", configuration: "mergedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive = false }
 }
 

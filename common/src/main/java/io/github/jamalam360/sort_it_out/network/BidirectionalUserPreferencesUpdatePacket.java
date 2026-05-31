@@ -1,11 +1,11 @@
 package io.github.jamalam360.sort_it_out.network;
 
+import io.github.jamalam360.jamlib.api.network.PayloadType;
+import io.github.jamalam360.jamlib.api.network.StreamCodecNetworkPayloadType;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -32,23 +32,37 @@ public class BidirectionalUserPreferencesUpdatePacket {
 			}
 	);
 
-	public record S2C(UserPreferences preferences) implements CustomPacketPayload {
+	public record S2C(UserPreferences preferences) {
 		public static final StreamCodec<RegistryFriendlyByteBuf, S2C> STREAM_CODEC = BASE_STREAM_CODEC.map(S2C::new, S2C::preferences);
-		public static final Type<S2C> TYPE = new Type<>(SortItOut.id("s2c_user_preferences"));
+		public static final PayloadType<S2C> TYPE = new PayloadType<>(SortItOut.id("s2c_user_preferences"));
 
-		@Override
-		public @NotNull Type<? extends CustomPacketPayload> type() {
-			return TYPE;
+		public static class Type implements StreamCodecNetworkPayloadType<S2C> {
+			public static final Type INSTANCE = new Type();
+
+			private Type() {
+			}
+
+			@Override
+			public StreamCodec<RegistryFriendlyByteBuf, S2C> getStreamCodec() {
+				return STREAM_CODEC;
+			}
 		}
 	}
 
-	public record C2S(UserPreferences preferences) implements CustomPacketPayload {
+	public record C2S(UserPreferences preferences) {
 		public static final StreamCodec<RegistryFriendlyByteBuf, C2S> STREAM_CODEC = BASE_STREAM_CODEC.map(C2S::new, C2S::preferences);
-		public static final CustomPacketPayload.Type<C2S> TYPE = new CustomPacketPayload.Type<>(SortItOut.id("c2s_user_preferences"));
+		public static final PayloadType<C2S> TYPE = new PayloadType<>(SortItOut.id("c2s_user_preferences"));
 
-		@Override
-		public @NotNull CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
-			return TYPE;
+		public static class Type implements StreamCodecNetworkPayloadType<C2S> {
+			public static final Type INSTANCE = new Type();
+
+			private Type() {
+			}
+
+			@Override
+			public StreamCodec<RegistryFriendlyByteBuf, C2S> getStreamCodec() {
+				return STREAM_CODEC;
+			}
 		}
 	}
 }

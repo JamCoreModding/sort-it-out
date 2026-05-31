@@ -20,6 +20,23 @@ dependencies {
     implementation libs.jamlib.common
 }
 
+tasks.register('mergedJar', Jar) {
+    from sourceSets.main.output
+    from sourceSets.client.output
+    archiveClassifier = 'merged'
+}
+
+configurations {
+    mergedElements {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    mergedElements tasks.mergedJar
+}
+
 tasks.processResources.dependsOn("updateServerTranslationsHelper")
 tasks.register("updateServerTranslationsHelper") {
     def langDir = project.file("src/main/resources/assets/sort_it_out/lang")

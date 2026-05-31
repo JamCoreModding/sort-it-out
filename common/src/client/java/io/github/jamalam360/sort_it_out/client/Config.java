@@ -1,8 +1,8 @@
 package io.github.jamalam360.sort_it_out.client;
 
-import dev.architectury.networking.NetworkManager;
-import io.github.jamalam360.jamlib.config.ConfigExtensions;
-import io.github.jamalam360.jamlib.config.ConfigManager;
+import io.github.jamalam360.jamlib.api.config.ConfigExtensions;
+import io.github.jamalam360.jamlib.api.config.ConfigManager;
+import io.github.jamalam360.jamlib.api.network.Network;
 import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
@@ -52,12 +52,12 @@ public class Config extends UserPreferences implements ConfigExtensions<Config> 
 	public void sync() {
 		if (this.shouldSync()) {
 			SortItOut.LOGGER.info("Sending updated preferences to server");
-			NetworkManager.sendToServer(new BidirectionalUserPreferencesUpdatePacket.C2S(this));
+			Network.sendToServer(BidirectionalUserPreferencesUpdatePacket.C2S.TYPE, new BidirectionalUserPreferencesUpdatePacket.C2S(this));
 		}
 	}
 
 	private boolean shouldSync() {
-		return NetworkManager.canServerReceive(BidirectionalUserPreferencesUpdatePacket.C2S.TYPE) && // Only send if the server has SIO installed
+		return Network.getServerCapability().canReceive(BidirectionalUserPreferencesUpdatePacket.C2S.TYPE) && // Only send if the server has SIO installed
 						Minecraft.getInstance().getSingleplayerServer() == null; // and we are not in single player or hosting a LAN server
 	}
 }

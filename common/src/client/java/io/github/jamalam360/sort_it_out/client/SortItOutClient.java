@@ -1,16 +1,14 @@
 package io.github.jamalam360.sort_it_out.client;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import dev.architectury.event.EventResult;
-import dev.architectury.event.events.client.ClientCommandRegistrationEvent;
-import dev.architectury.event.events.client.ClientGuiEvent;
-import dev.architectury.event.events.client.ClientScreenInputEvent;
-import dev.architectury.event.events.client.ClientTickEvent;
-import dev.architectury.networking.NetworkManager;
-import dev.architectury.registry.ReloadListenerRegistry;
-import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
-import io.github.jamalam360.jamlib.config.ConfigManager;
-import io.github.jamalam360.jamlib.events.client.ClientPlayLifecycleEvents;
+import io.github.jamalam360.jamlib.api.config.ConfigManager;
+import io.github.jamalam360.jamlib.api.network.Network;
+import io.github.jamalam360.jamlib.api.pack.PackReloadListenerRegistry;
+import io.github.jamalam360.jamlib.client.api.command.ClientCommandRegistrationEvent;
+import io.github.jamalam360.jamlib.client.api.events.ClientConnectionEvents;
+import io.github.jamalam360.jamlib.client.api.events.ClientContainerRenderEvents;
+import io.github.jamalam360.jamlib.client.api.events.ClientLevelTickEvents;
+import io.github.jamalam360.jamlib.client.api.keymapping.KeyMappingRegistry;
+import io.github.jamalam360.jamlib.client.api.network.ClientNetworkEvents;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import io.github.jamalam360.sort_it_out.client.button.ScreenSortButtonsLoader;
 import io.github.jamalam360.sort_it_out.client.mixin.AbstractContainerScreenAccessor;
@@ -22,11 +20,8 @@ import io.github.jamalam360.sort_it_out.sort.ContainerSorterUtil;
 import io.github.jamalam360.sort_it_out.util.CreativeModeTabLookup;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -36,7 +31,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import org.lwjgl.glfw.GLFW;
 
-import static dev.architectury.event.events.client.ClientCommandRegistrationEvent.literal;
+import static io.github.jamalam360.jamlib.client.api.command.ClientCommandBuilders.literal;
 
 public class SortItOutClient {
 	public static final ConfigManager<Config> CONFIG = new ConfigManager<>(SortItOut.MOD_ID, "client_preferences", Config.class);
@@ -47,17 +42,15 @@ public class SortItOutClient {
 
 	public static void init() {
 		ServerUserPreferences.INSTANCE.setClientUserPreferences(CONFIG);
-		ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, ScreenSortButtonsLoader.INSTANCE, SortItOut.id("sort_button_reloader"));
+		PackReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SortItOut.id("sort_button_reloader"), ScreenSortButtonsLoader.INSTANCE);
 		sortKeyMapping = new KeyMapping("key.sort_it_out.sort", GLFW.GLFW_KEY_I, KeyMapping.Category.register(SortItOut.id("sort_it_out")));
-		KeyMappingRegistry.register(sortKeyMapping);
-		ClientTickEvent.CLIENT_LEVEL_POST.register(SortItOutClient::postLevelTick);
-		ClientPlayLifecycleEvents.JOIN.register((mc) -> CONFIG.get().sync());
-		ClientPlayLifecycleEvents.JOIN.register((mc) -> CreativeModeTabLookup.INSTANCE.buildLookup(mc.level));
-		ClientScreenInputEvent.KEY_RELEASED_PRE.register(SortItOutClient::keyReleased);
-		ClientScreenInputEvent.MOUSE_RELEASED_PRE.register(SortItOutClient::mouseReleased);
-		ClientGuiEvent.RENDER_CONTAINER_FOREGROUND.register(SortItOutClient::renderContainerForeground);
+		KeyMappingRegistry.register(sortKeyMapping, true);
+		ClientLevelTickEvents.POST_TICK.listen(SortItOutClient::postLevelTick);
+		ClientNetworkEvents.SERVER_CAPABILITIES_HANDSHAKE_COMPLETED.listen(() -> CONFIG.get().sync());
+		ClientConnectionEvents.CONNECT.listen((mc) -> CreativeModeTabLookup.INSTANCE.buildLookup(mc.level));
+		ClientContainerRenderEvents.RENDER_FOREGROUND.listen(SortItOutClient::renderContainerForeground);
 
-		NetworkManager.registerReceiver(NetworkManager.Side.S2C, BidirectionalUserPreferencesUpdatePacket.S2C.TYPE, BidirectionalUserPreferencesUpdatePacket.S2C.STREAM_CODEC, (prefs, ctx) -> {
+		Network.registerHandler(Network.Direction.CLIENT_BOUND, BidirectionalUserPreferencesUpdatePacket.S2C.TYPE, (ctx, prefs) -> {
 			justReceivedFromServer = true;
 			CONFIG.get().invertSorting = prefs.preferences().invertSorting;
 			CONFIG.get().slotSortingTrigger = prefs.preferences().slotSortingTrigger;
@@ -66,19 +59,19 @@ public class SortItOutClient {
 			SortItOut.LOGGER.info("Received updated preferences from server (via config-edit commands)");
 		});
 
-		ClientCommandRegistrationEvent.EVENT.register(((dispatcher, context) -> dispatcher.register(
+		ClientCommandRegistrationEvent.EVENT.listen(((dispatcher, context) -> dispatcher.register(
 				literal("sortitoutc")
 						.then(literal("toggle_force_client_sort")
 								.executes((ctx) -> {
 									isClientSortingForced = !isClientSortingForced;
-									ctx.getSource().arch$sendSuccess(() -> Component.literal("Client Sorting Forced: " + isClientSortingForced), false);
+									ctx.getSource().client$sendSuccess(Component.literal("Client Sorting Forced: " + isClientSortingForced));
 									return 0;
 								})
 						)
 						.then(literal("toggle_slot_index_debug_renderer")
 								.executes((ctx) -> {
 									isSlotIndexOverlayEnabled = !isSlotIndexOverlayEnabled;
-									ctx.getSource().arch$sendSuccess(() -> Component.literal("Slot Index Debug Overlay: " + isSlotIndexOverlayEnabled), false);
+									ctx.getSource().client$sendSuccess(Component.literal("Slot Index Debug Overlay: " + isSlotIndexOverlayEnabled));
 									return 0;
 								})
 						)
@@ -86,8 +79,8 @@ public class SortItOutClient {
 	}
 
 	public static void sortOnEitherSide(AbstractContainerMenu menu, Slot slot) {
-		if (NetworkManager.canServerReceive(C2SRequestSortPacket.TYPE) && !isClientSortingForced) {
-			NetworkManager.sendToServer(new C2SRequestSortPacket(menu.containerId, slot.index));
+		if (Network.getServerCapability().canReceive(C2SRequestSortPacket.TYPE) && !isClientSortingForced) {
+			Network.sendToServer(C2SRequestSortPacket.TYPE, new C2SRequestSortPacket(menu.containerId, slot.index));
 		} else if (!ClientSortWorker.INSTANCE.isWorking()) {
 			ContainerSorterUtil.sortWithSelectionSort(slot.container, new ClientSortableContainer(slot.container), CONFIG.get());
 		} else {
@@ -113,7 +106,7 @@ public class SortItOutClient {
 		}
 	}
 
-	private static void renderContainerForeground(AbstractContainerScreen<?> screen, GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+	private static void renderContainerForeground(AbstractContainerScreen<?> screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY, double delta) {
 		if (isSlotIndexOverlayEnabled) {
 			Identifier type;
 
@@ -123,31 +116,12 @@ public class SortItOutClient {
 				type = null;
 			}
 
-			graphics.drawCenteredString(Minecraft.getInstance().font, "" + type, ((AbstractContainerScreenAccessor) screen).getImageWidth() / 2, -50, 0xFFFFFF);
-			graphics.drawCenteredString(Minecraft.getInstance().font, screen.getClass().getName(), ((AbstractContainerScreenAccessor) screen).getImageWidth() / 2, -40, 0xFFFFFF);
+			graphics.centeredText(Minecraft.getInstance().font, "" + type, ((AbstractContainerScreenAccessor) screen).getImageWidth() / 2, -50, 0xFFFFFF);
+			graphics.centeredText(Minecraft.getInstance().font, screen.getClass().getName(), ((AbstractContainerScreenAccessor) screen).getImageWidth() / 2, -40, 0xFFFFFF);
 
 			for (Slot slot : screen.getMenu().slots) {
-				graphics.drawString(Minecraft.getInstance().font, "" + slot.index, slot.x, slot.y, 0xFFFFFF);
+				graphics.text(Minecraft.getInstance().font, "" + slot.index, slot.x, slot.y, 0xFFFFFF);
 			}
 		}
-	}
-
-	// Make the keybind work in containers
-	private static EventResult keyReleased(Minecraft minecraft, Screen screen, KeyEvent ev) {
-		if (sortKeyMapping.matches(ev)) {
-			KeyMapping.click(InputConstants.Type.KEYSYM.getOrCreate(ev.key()));
-			return EventResult.interruptTrue();
-		}
-
-		return EventResult.pass();
-	}
-
-	private static EventResult mouseReleased(Minecraft minecraft, Screen screen, MouseButtonEvent ev) {
-		if (sortKeyMapping.matchesMouse(ev)) {
-			KeyMapping.click(InputConstants.Type.MOUSE.getOrCreate(ev.input()));
-			return EventResult.interruptTrue();
-		}
-
-		return EventResult.pass();
 	}
 }
