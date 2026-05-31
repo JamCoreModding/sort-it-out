@@ -2,7 +2,7 @@ package io.github.jamalam360.sort_it_out.network;
 
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
-import io.github.jamalam360.jamlib.config.ConfigManager;
+import io.github.jamalam360.jamlib.api.config.ConfigManager;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
