@@ -51,7 +51,7 @@ public abstract class AbstractContainerMenuMixin {
 		UserPreferences preferences = ServerUserPreferences.INSTANCE.getPlayerPreferences(player);
 		if (this.sort_it_out$impl.shouldSort(this.getSlot(slotId), button, containerInput, this.getCarried(), player)) {
 			Container container = this.slots.get(slotId).container;
-			ContainerSorterUtil.sortWithQuickSort(container, new ServerSortableContainer(container), preferences);
+			ContainerSorterUtil.sortWithSelectionSort(container, new ServerSortableContainer(container), preferences);
 			SortItOut.playSortSound(player);
 
 			if (preferences.slotSortingTrigger == UserPreferences.SlotSortingTrigger.PRESS_OFFHAND_KEY) {

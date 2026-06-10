@@ -15,6 +15,7 @@ public class PacketHandlers {
 		Network.registerHandler(PacketDirection.SERVERBOUND, BidirectionalUserPreferencesUpdatePacket.C2S.KIND, (ctx, prefs) -> {
 			ConfigManager<UserPreferences> configManager = ServerUserPreferences.INSTANCE.getPlayerConfigManager(ctx.getPlayer());
 			configManager.get().invertSorting = prefs.preferences().invertSorting;
+			configManager.get().slotSortingTrigger = prefs.preferences().slotSortingTrigger;
 			configManager.get().comparators = prefs.preferences().comparators;
 			configManager.save();
 			SortItOut.LOGGER.info("Received updated preferences from client {}", ctx.getPlayer().getStringUUID());
@@ -23,7 +24,7 @@ public class PacketHandlers {
 		Network.registerHandler(PacketDirection.SERVERBOUND, C2SRequestSortPacket.KIND, (ctx, packet) -> {
 			if (ctx.getPlayer().containerMenu.containerId == packet.containerId()) {
 				Container container = ctx.getPlayer().containerMenu.slots.get(packet.slotIndex()).container;
-				ContainerSorterUtil.sortWithQuickSort(container, new ServerSortableContainer(container), ServerUserPreferences.INSTANCE.getPlayerPreferences(ctx.getPlayer()));
+				ContainerSorterUtil.sortWithSelectionSort(container, new ServerSortableContainer(container), ServerUserPreferences.INSTANCE.getPlayerPreferences(ctx.getPlayer()));
 			}
 		});
 	}
