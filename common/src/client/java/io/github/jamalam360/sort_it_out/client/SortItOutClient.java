@@ -2,6 +2,7 @@ package io.github.jamalam360.sort_it_out.client;
 
 import io.github.jamalam360.jamlib.api.config.ConfigManager;
 import io.github.jamalam360.jamlib.api.network.Network;
+import io.github.jamalam360.jamlib.api.network.PacketDirection;
 import io.github.jamalam360.jamlib.api.pack.PackReloadListenerRegistry;
 import io.github.jamalam360.jamlib.client.api.command.ClientCommandRegistrationEvent;
 import io.github.jamalam360.jamlib.client.api.events.ClientConnectionEvents;
@@ -50,7 +51,7 @@ public class SortItOutClient {
 		ClientConnectionEvents.CONNECT.listen((mc) -> CreativeModeTabLookup.INSTANCE.buildLookup(mc.level));
 		ClientContainerRenderEvents.RENDER_FOREGROUND.listen(SortItOutClient::renderContainerForeground);
 
-		Network.registerHandler(Network.Direction.CLIENT_BOUND, BidirectionalUserPreferencesUpdatePacket.S2C.TYPE, (ctx, prefs) -> {
+		Network.registerHandler(PacketDirection.CLIENTBOUND, BidirectionalUserPreferencesUpdatePacket.S2C.KIND, (ctx, prefs) -> {
 			justReceivedFromServer = true;
 			CONFIG.get().invertSorting = prefs.preferences().invertSorting;
 			CONFIG.get().slotSortingTrigger = prefs.preferences().slotSortingTrigger;
@@ -79,8 +80,8 @@ public class SortItOutClient {
 	}
 
 	public static void sortOnEitherSide(AbstractContainerMenu menu, Slot slot) {
-		if (Network.getServerCapability().canReceive(C2SRequestSortPacket.TYPE) && !isClientSortingForced) {
-			Network.sendToServer(C2SRequestSortPacket.TYPE, new C2SRequestSortPacket(menu.containerId, slot.index));
+		if (Network.getServerCapability().canReceive(C2SRequestSortPacket.KIND) && !isClientSortingForced) {
+			Network.sendToServer(new C2SRequestSortPacket(menu.containerId, slot.index));
 		} else if (!ClientSortWorker.INSTANCE.isWorking()) {
 			ContainerSorterUtil.sortWithSelectionSort(slot.container, new ClientSortableContainer(slot.container), CONFIG.get());
 		} else {

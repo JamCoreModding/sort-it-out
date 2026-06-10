@@ -52,12 +52,12 @@ public class Config extends UserPreferences implements ConfigExtensions<Config> 
 	public void sync() {
 		if (this.shouldSync()) {
 			SortItOut.LOGGER.info("Sending updated preferences to server");
-			Network.sendToServer(BidirectionalUserPreferencesUpdatePacket.C2S.TYPE, new BidirectionalUserPreferencesUpdatePacket.C2S(this));
+			Network.sendToServer(new BidirectionalUserPreferencesUpdatePacket.C2S(this));
 		}
 	}
 
 	private boolean shouldSync() {
-		return Network.getServerCapability().canReceive(BidirectionalUserPreferencesUpdatePacket.C2S.TYPE) && // Only send if the server has SIO installed
+		return Network.getServerCapability().canReceive(BidirectionalUserPreferencesUpdatePacket.C2S.KIND) && // Only send if the server has SIO installed
 						Minecraft.getInstance().getSingleplayerServer() == null; // and we are not in single player or hosting a LAN server
 	}
 }

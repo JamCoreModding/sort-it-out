@@ -43,7 +43,7 @@ public class CommandFeedback {
 	}
 
 	public static MutableComponent translatable(CommandContext<CommandSourceStack> ctx, String key, Object... args) {
-		if (Network.getPlayerCapability(ctx.getSource().getPlayer()).canReceive(BidirectionalUserPreferencesUpdatePacket.S2C.TYPE)) {
+		if (Network.getPlayerCapability(ctx.getSource().getPlayer()).canReceive(BidirectionalUserPreferencesUpdatePacket.S2C.KIND)) {
 			return Component.translatable(key, args);
 		} else {
 			String lang = ctx.getSource().getPlayer() == null ? "en_us" : ctx.getSource().getPlayer().clientInformation().language();

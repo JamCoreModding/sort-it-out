@@ -81,7 +81,7 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 			cancellable = true
 	)
 	private void sort_it_out$triggerSortOnMiddleClick(Slot slot, int slotId, int buttonNum, ContainerInput containerInput, CallbackInfo ci) {
-		if (slotId < 0 || slotId >= this.menu.slots.size() || Network.getServerCapability().canReceive(BidirectionalUserPreferencesUpdatePacket.C2S.TYPE)) {
+		if (slotId < 0 || slotId >= this.menu.slots.size() || Network.getServerCapability().canReceive(BidirectionalUserPreferencesUpdatePacket.C2S.KIND)) {
 			return;
 		}
 

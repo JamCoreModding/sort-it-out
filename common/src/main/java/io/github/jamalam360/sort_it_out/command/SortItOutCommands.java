@@ -104,8 +104,8 @@ public class SortItOutCommands {
 		modifier.accept(manager.get());
 		manager.save();
 
-		if (ctx.getSource().getPlayer() != null && Network.getPlayerCapability(ctx.getSource().getPlayer()).canReceive(BidirectionalUserPreferencesUpdatePacket.S2C.TYPE)) {
-			Network.sendToClient(ctx.getSource().getPlayer(), BidirectionalUserPreferencesUpdatePacket.S2C.TYPE, new BidirectionalUserPreferencesUpdatePacket.S2C(manager.get()));
+		if (ctx.getSource().getPlayer() != null && Network.getPlayerCapability(ctx.getSource().getPlayer()).canReceive(BidirectionalUserPreferencesUpdatePacket.S2C.KIND)) {
+			Network.sendToClient(ctx.getSource().getPlayer(), new BidirectionalUserPreferencesUpdatePacket.S2C(manager.get()));
 		}
 	}
 
