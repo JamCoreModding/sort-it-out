@@ -1,6 +1,6 @@
 package io.github.jamalam360.sort_it_out.preference;
 
-import io.github.jamalam360.jamlib.config.ConfigManager;
+import io.github.jamalam360.jamlib.api.config.ConfigManager;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;

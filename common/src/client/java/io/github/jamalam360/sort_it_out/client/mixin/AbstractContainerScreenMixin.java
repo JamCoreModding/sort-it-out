@@ -1,6 +1,6 @@
 package io.github.jamalam360.sort_it_out.client.mixin;
 
-import dev.architectury.networking.NetworkManager;
+import io.github.jamalam360.jamlib.api.network.Network;
 import io.github.jamalam360.sort_it_out.client.SortItOutClient;
 import io.github.jamalam360.sort_it_out.client.button.ScreenSortButton;
 import io.github.jamalam360.sort_it_out.client.button.ScreenSortButtonsLoader;
@@ -8,16 +8,14 @@ import io.github.jamalam360.sort_it_out.client.gui.SortButton;
 import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import io.github.jamalam360.sort_it_out.util.AbstractContainerMenuMixinImpl;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,6 +38,7 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 
 	@Shadow @Final protected AbstractContainerMenu menu;
 
+	@Final
 	@Shadow protected int imageHeight;
 
 	@Unique
@@ -55,7 +54,6 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 		super(title);
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Inject(
 			method = "init",
 			at = @At("TAIL")
@@ -78,16 +76,16 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 			method = "slotClicked",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handleInventoryMouseClick(IIILnet/minecraft/world/inventory/ClickType;Lnet/minecraft/world/entity/player/Player;)V"
+					target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handleContainerInput(IIILnet/minecraft/world/inventory/ContainerInput;Lnet/minecraft/world/entity/player/Player;)V"
 			),
 			cancellable = true
 	)
-	private void sort_it_out$triggerSortOnMiddleClick(Slot slot, int slotId, int mouseButton, ClickType type, CallbackInfo ci) {
-		if (slotId < 0 || slotId >= this.menu.slots.size() || NetworkManager.canServerReceive(BidirectionalUserPreferencesUpdatePacket.C2S.TYPE)) {
+	private void sort_it_out$triggerSortOnMiddleClick(Slot slot, int slotId, int buttonNum, ContainerInput containerInput, CallbackInfo ci) {
+		if (slotId < 0 || slotId >= this.menu.slots.size() || Network.getServerCapability().canReceive(BidirectionalUserPreferencesUpdatePacket.C2S.KIND)) {
 			return;
 		}
 
-		if (this.sort_it_out$impl.shouldSort(this.menu.getSlot(slotId), mouseButton, type, this.menu.getCarried(), Minecraft.getInstance().player)) {
+		if (this.sort_it_out$impl.shouldSort(this.menu.getSlot(slotId), buttonNum, containerInput, this.menu.getCarried(), Minecraft.getInstance().player)) {
 			SortItOutClient.sortOnEitherSide(this.menu, this.menu.getSlot(slotId));
 			ci.cancel();
 		}

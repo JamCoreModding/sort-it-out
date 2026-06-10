@@ -1,7 +1,7 @@
 package io.github.jamalam360.sort_it_out.command;
 
 import com.mojang.brigadier.context.CommandContext;
-import dev.architectury.networking.NetworkManager;
+import io.github.jamalam360.jamlib.api.network.Network;
 import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
@@ -43,7 +43,7 @@ public class CommandFeedback {
 	}
 
 	public static MutableComponent translatable(CommandContext<CommandSourceStack> ctx, String key, Object... args) {
-		if (NetworkManager.canPlayerReceive(ctx.getSource().getPlayer(), BidirectionalUserPreferencesUpdatePacket.S2C.TYPE)) {
+		if (Network.getPlayerCapability(ctx.getSource().getPlayer()).canReceive(BidirectionalUserPreferencesUpdatePacket.S2C.KIND)) {
 			return Component.translatable(key, args);
 		} else {
 			String lang = ctx.getSource().getPlayer() == null ? "en_us" : ctx.getSource().getPlayer().clientInformation().language();

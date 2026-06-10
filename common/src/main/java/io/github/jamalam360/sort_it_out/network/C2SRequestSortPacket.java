@@ -1,12 +1,12 @@
 package io.github.jamalam360.sort_it_out.network;
 
+import io.github.jamalam360.jamlib.api.network.PacketKind;
+import io.github.jamalam360.jamlib.api.network.PacketPayload;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-public record C2SRequestSortPacket(int containerId, int slotIndex) implements CustomPacketPayload {
-	public static final Type<C2SRequestSortPacket> TYPE = new Type<>(SortItOut.id("request_sort"));
+public record C2SRequestSortPacket(int containerId, int slotIndex) implements PacketPayload<C2SRequestSortPacket> {
 	public static final StreamCodec<RegistryFriendlyByteBuf, C2SRequestSortPacket> STREAM_CODEC = StreamCodec.of(
 			(buf, packet) -> {
 				buf.writeContainerId(packet.containerId());
@@ -14,9 +14,15 @@ public record C2SRequestSortPacket(int containerId, int slotIndex) implements Cu
 			},
 			(buf) -> new C2SRequestSortPacket(buf.readContainerId(), buf.readInt())
 	);
+	public static final PacketKind<C2SRequestSortPacket> KIND = PacketKind.of(SortItOut.id("request_sort"), STREAM_CODEC);
 
 	@Override
-	public Type<? extends CustomPacketPayload> type() {
-		return TYPE;
+	public PacketKind<C2SRequestSortPacket> getKind() {
+		return KIND;
+	}
+
+	@Override
+	public C2SRequestSortPacket getPayload() {
+		return this;
 	}
 }

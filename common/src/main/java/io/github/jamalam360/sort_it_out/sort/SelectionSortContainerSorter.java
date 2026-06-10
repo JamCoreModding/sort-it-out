@@ -19,7 +19,7 @@ public class SelectionSortContainerSorter implements ContainerSorter {
 		for (int j = startIndex; j < startIndex + containerSize - 1; j++) {
 			int min = j;
 			for (int i = j + 1; i < startIndex + containerSize; i++) {
-				if (comparator.compare(container.getItem(i), container.getItem(min)) < 0 || container.getItem(min).isEmpty()) {
+				if (comparator.compare(container.getItem(i), container.getItem(min)) < 0) {
 					min = i;
 				}
 			}

@@ -13,7 +13,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -43,15 +43,15 @@ public abstract class AbstractContainerMenuMixin {
 			at = @At("HEAD"),
 			cancellable = true
 	)
-	private void sort_it_out$triggerSortOnMiddleClick(int slotId, int button, ClickType clickType, Player player, CallbackInfo ci) {
+	private void sort_it_out$triggerSortOnMiddleClick(int slotId, int button, ContainerInput containerInput, Player player, CallbackInfo ci) {
 		if (slotId < 0 || slotId >= this.slots.size() || player.level().isClientSide()) {
 			return;
 		}
 
 		UserPreferences preferences = ServerUserPreferences.INSTANCE.getPlayerPreferences(player);
-		if (this.sort_it_out$impl.shouldSort(this.getSlot(slotId), button, clickType, this.getCarried(), player)) {
+		if (this.sort_it_out$impl.shouldSort(this.getSlot(slotId), button, containerInput, this.getCarried(), player)) {
 			Container container = this.slots.get(slotId).container;
-			ContainerSorterUtil.sortWithQuickSort(container, new ServerSortableContainer(container), preferences);
+			ContainerSorterUtil.sortWithSelectionSort(container, new ServerSortableContainer(container), preferences);
 			SortItOut.playSortSound(player);
 
 			if (preferences.slotSortingTrigger == UserPreferences.SlotSortingTrigger.PRESS_OFFHAND_KEY) {

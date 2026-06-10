@@ -16,9 +16,25 @@ loom {
 }
 
 dependencies {
-    modImplementation libs.fabric.loader
-    modImplementation libs.architectury.common
-    modImplementation libs.jamlib.common
+    implementation libs.fabric.loader
+    implementation libs.jamlib.common
+}
+
+tasks.register('mergedJar', Jar) {
+    from sourceSets.main.output
+    from sourceSets.client.output
+    archiveClassifier = 'merged'
+}
+
+configurations {
+    mergedElements {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    mergedElements tasks.mergedJar
 }
 
 tasks.processResources.dependsOn("updateServerTranslationsHelper")

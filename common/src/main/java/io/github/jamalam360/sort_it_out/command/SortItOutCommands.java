@@ -5,10 +5,10 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import dev.architectury.event.events.common.CommandRegistrationEvent;
-import dev.architectury.networking.NetworkManager;
-import dev.architectury.platform.Platform;
-import io.github.jamalam360.jamlib.config.ConfigManager;
+import io.github.jamalam360.jamlib.api.config.ConfigManager;
+import io.github.jamalam360.jamlib.api.events.CommandRegistrationEvent;
+import io.github.jamalam360.jamlib.api.network.Network;
+import io.github.jamalam360.jamlib.api.platform.Platform;
 import io.github.jamalam360.sort_it_out.network.BidirectionalUserPreferencesUpdatePacket;
 import io.github.jamalam360.sort_it_out.preference.ServerUserPreferences;
 import io.github.jamalam360.sort_it_out.preference.UserPreferences;
@@ -39,10 +39,10 @@ import static net.minecraft.commands.Commands.literal;
 
 public class SortItOutCommands {
 	public static void register() {
-		CommandRegistrationEvent.EVENT.register(SortItOutCommands::registerCommands);
+		CommandRegistrationEvent.EVENT.listen(SortItOutCommands::registerCommands);
 
 		if (Platform.isDevelopmentEnvironment()) {
-			CommandRegistrationEvent.EVENT.register(SortItOutCommands::registerDevCommands);
+			CommandRegistrationEvent.EVENT.listen(SortItOutCommands::registerDevCommands);
 		}
 	}
 
@@ -104,8 +104,8 @@ public class SortItOutCommands {
 		modifier.accept(manager.get());
 		manager.save();
 
-		if (ctx.getSource().getPlayer() != null && NetworkManager.canPlayerReceive(ctx.getSource().getPlayer(), BidirectionalUserPreferencesUpdatePacket.S2C.TYPE)) {
-			NetworkManager.sendToPlayer(ctx.getSource().getPlayer(), new BidirectionalUserPreferencesUpdatePacket.S2C(manager.get()));
+		if (ctx.getSource().getPlayer() != null && Network.getPlayerCapability(ctx.getSource().getPlayer()).canReceive(BidirectionalUserPreferencesUpdatePacket.S2C.KIND)) {
+			Network.sendToClient(ctx.getSource().getPlayer(), new BidirectionalUserPreferencesUpdatePacket.S2C(manager.get()));
 		}
 	}
 
@@ -165,14 +165,14 @@ public class SortItOutCommands {
 		while (size != 0) {
 			int slot = 0;
 			while (!blockEntity.getItem(slot).isEmpty()) {
-				slot = level.random.nextInt(27);
+				slot = level.getRandom().nextInt(27);
 			}
 
-			Item item = items.get(level.random.nextInt(items.size()));
+			Item item = items.get(level.getRandom().nextInt(items.size()));
 			ItemStack stack = item.getDefaultInstance();
 
 			if (stack.getMaxStackSize() != 1) {
-				stack.setCount(level.random.nextInt(1, stack.getMaxStackSize()));
+				stack.setCount(level.getRandom().nextInt(1, stack.getMaxStackSize()));
 			}
 
 			blockEntity.setItem(slot, stack);

@@ -3,7 +3,7 @@ package io.github.jamalam360.sort_it_out.client.worker;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
@@ -14,11 +14,11 @@ public record ClickAction(
 		ItemStack newCarriedItem
 ) {
 	public boolean execute(Minecraft minecraft) {
-		minecraft.gameMode.handleInventoryMouseClick(
+		minecraft.gameMode.handleContainerInput(
 				this.containerId(),
 				this.slotId(),
 				getPlaceButton(newSlotItem, newCarriedItem),
-				ClickType.PICKUP,
+				ContainerInput.PICKUP,
 				minecraft.player
 		);
 

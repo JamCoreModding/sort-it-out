@@ -1,7 +1,7 @@
 package io.github.jamalam360.sort_it_out;
 
-import dev.architectury.event.events.common.LifecycleEvent;
 import io.github.jamalam360.jamlib.JamLib;
+import io.github.jamalam360.jamlib.api.events.ServerLifecycleEvents;
 import io.github.jamalam360.sort_it_out.command.SortItOutCommands;
 import io.github.jamalam360.sort_it_out.network.PacketHandlers;
 import io.github.jamalam360.sort_it_out.util.CreativeModeTabLookup;
@@ -23,7 +23,7 @@ public class SortItOut {
 		JamLib.checkForJarRenaming(SortItOut.class);
 		SortItOutCommands.register();
 		PacketHandlers.register();
-		LifecycleEvent.SERVER_STARTED.register((server) -> CreativeModeTabLookup.INSTANCE.buildLookup(server.overworld()));
+		ServerLifecycleEvents.STARTED.listen((server) -> CreativeModeTabLookup.INSTANCE.buildLookup(server.overworld()));
 	}
 
 	public static Identifier id(String path) {
@@ -31,11 +31,11 @@ public class SortItOut {
 	}
 
 	public static void playSortSound(Player player) {
-		float vol = 0.4f + (0.5f * player.level().random.nextFloat());
-		float pitch = 0.75f + (0.5f * player.level().random.nextFloat());
+		float vol = 0.4f + (0.5f * player.level().getRandom().nextFloat());
+		float pitch = 0.75f + (0.5f * player.level().getRandom().nextFloat());
 
 		if (player instanceof ServerPlayer serverPlayer) {
-			serverPlayer.connection.send(new ClientboundSoundPacket(SoundEvents.UI_BUTTON_CLICK, SoundSource.BLOCKS, player.getX(), player.getY(), player.getZ(), vol, pitch, player.level().random.nextLong()));
+			serverPlayer.connection.send(new ClientboundSoundPacket(SoundEvents.UI_BUTTON_CLICK, SoundSource.BLOCKS, player.getX(), player.getY(), player.getZ(), vol, pitch, player.level().getRandom().nextLong()));
 		} else {
 			player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), vol, pitch);
 		}
