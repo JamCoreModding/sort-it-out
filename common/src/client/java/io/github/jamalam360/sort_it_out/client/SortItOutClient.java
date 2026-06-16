@@ -93,7 +93,7 @@ public class SortItOutClient {
 
 	private static void postLevelTick(ClientLevel level) {
 		while (sortKeyMapping.consumeClick()) {
-			if (Minecraft.getInstance().screen instanceof AbstractContainerScreen<?> containerScreen) {
+			if (Minecraft.getInstance().gui.screen() instanceof AbstractContainerScreen<?> containerScreen) {
 				int mouseX = (int) (Minecraft.getInstance().mouseHandler.xpos() * (double) Minecraft.getInstance().getWindow().getGuiScaledWidth() / (double) Minecraft.getInstance().getWindow().getScreenWidth());
 				int mouseY = (int) (Minecraft.getInstance().mouseHandler.ypos() * (double) Minecraft.getInstance().getWindow().getGuiScaledHeight() / (double) Minecraft.getInstance().getWindow().getScreenHeight());
 

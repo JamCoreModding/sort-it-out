@@ -10,6 +10,7 @@ import java.util.List;
 public class UserPreferences {
 	public boolean invertSorting = false;
 	public List<SortingComparator> comparators = new ArrayList<>(List.of(
+			SortingComparator.CREATIVE_TAB,
 			SortingComparator.DISPLAY_NAME,
 			SortingComparator.COUNT,
 			SortingComparator.DURABILITY

@@ -23,7 +23,7 @@ public class SortButton extends SpriteIconButton.CenteredIcon {
 	private final Slot slot;
 
 	public SortButton(int x, int y, AbstractContainerMenu menu, Slot slot) {
-		super(WIDTH, HEIGHT, ANNOTATION, SPRITE_WIDTH, SPRITE_HEIGHT, new WidgetSprites(SPRITE, SPRITE, HOVERED_SPRITE, HOVERED_SPRITE), SortButton::onPress, null, null);
+		super(WIDTH, HEIGHT, ANNOTATION, SPRITE_WIDTH, SPRITE_HEIGHT, 0, 0, new WidgetSprites(SPRITE, SPRITE, HOVERED_SPRITE, HOVERED_SPRITE), SortButton::onPress, null, null, false);
 		this.menu = menu;
 		this.slot = slot;
 		this.setX(x);
