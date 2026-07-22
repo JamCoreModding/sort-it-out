@@ -27,5 +27,6 @@
   "config.sort_it_out.client_preferences.slotSortingTrigger.tooltip": "The action to use to trigger sorting (along with the keybind and sort buttons, if the mod is installed clientside)",
   "config.sort_it_out.client_preferences.slotSortingTrigger.press_offhand_key": "Press Offhand Swap Key (replaces vanilla behaviour)",
   "config.sort_it_out.client_preferences.slotSortingTrigger.press_offhand_key_empty_slot": "Press Offhand Swap Key Over Empty Slot",
-  "config.sort_it_out.client_preferences.slotSortingTrigger.double_click_empty_slot": "Double Click Empty Slot"
+  "config.sort_it_out.client_preferences.slotSortingTrigger.double_click_empty_slot": "Double Click Empty Slot",
+  "config.sort_it_out.client_preferences.slotSortingTrigger.none": "None"
 }

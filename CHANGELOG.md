@@ -1,1 +1,1 @@
-Update to 26.2
+- Add 'None' slot sorting trigger (sorting only triggered by sort keybind or button) (#32).

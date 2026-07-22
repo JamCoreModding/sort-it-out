@@ -16,6 +16,7 @@ public class AbstractContainerMenuMixinImpl {
 			case PRESS_OFFHAND_KEY -> button == Inventory.SLOT_OFFHAND;
 			case PRESS_OFFHAND_KEY_EMPTY_SLOT -> button == Inventory.SLOT_OFFHAND && !slot.hasItem() && player.getOffhandItem().isEmpty();
 			case DOUBLE_CLICK_EMPTY_SLOT -> button == 0 && input == ContainerInput.PICKUP_ALL && !slot.hasItem() && carried.isEmpty();
+			case NONE -> false;
 		};
 	}
 }
