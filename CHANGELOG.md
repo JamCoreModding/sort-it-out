@@ -1,2 +1,1 @@
-- Sync slot sorting trigger preference (#26).
-- Prevent double-syncs when updating preferences server side.
+- Add 'None' slot sorting trigger (sorting only triggered by sort keybind or button) (#32).
