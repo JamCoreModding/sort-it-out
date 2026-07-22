@@ -42,6 +42,7 @@ public class ServerTranslationsHelper {
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.slotSortingTrigger.press_offhand_key", "Press Offhand Swap Key (replaces vanilla behaviour)");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.slotSortingTrigger.press_offhand_key_empty_slot", "Press Offhand Swap Key Over Empty Slot");
 		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.slotSortingTrigger.double_click_empty_slot", "Double Click Empty Slot");
+		LANGUAGES.computeIfAbsent("en_us", (ignored) -> new HashMap<>()).put("config.sort_it_out.client_preferences.slotSortingTrigger.none", "None");
 		// gradle-auto-populated
 	}
 }
