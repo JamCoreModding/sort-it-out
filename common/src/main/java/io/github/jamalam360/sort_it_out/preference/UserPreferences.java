@@ -48,6 +48,7 @@ public class UserPreferences {
 	public enum SlotSortingTrigger {
 		PRESS_OFFHAND_KEY,
 		PRESS_OFFHAND_KEY_EMPTY_SLOT,
-		DOUBLE_CLICK_EMPTY_SLOT
+		DOUBLE_CLICK_EMPTY_SLOT,
+		NONE
 	}
 }
