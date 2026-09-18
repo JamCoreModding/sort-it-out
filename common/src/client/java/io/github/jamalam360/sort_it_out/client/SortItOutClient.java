@@ -1,5 +1,6 @@
 package io.github.jamalam360.sort_it_out.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import io.github.jamalam360.jamlib.api.config.ConfigManager;
 import io.github.jamalam360.jamlib.api.network.Network;
 import io.github.jamalam360.jamlib.api.network.PacketDirection;
@@ -30,7 +31,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import org.lwjgl.glfw.GLFW;
 
 import static io.github.jamalam360.jamlib.client.api.command.ClientCommandBuilders.literal;
 
@@ -44,7 +44,7 @@ public class SortItOutClient {
 	public static void init() {
 		ServerUserPreferences.INSTANCE.setClientUserPreferences(CONFIG);
 		PackReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, SortItOut.id("sort_button_reloader"), ScreenSortButtonsLoader.INSTANCE);
-		sortKeyMapping = new KeyMapping("key.sort_it_out.sort", GLFW.GLFW_KEY_I, KeyMapping.Category.register(SortItOut.id("sort_it_out")));
+		sortKeyMapping = new KeyMapping("key.sort_it_out.sort", InputConstants.KEY_I, KeyMapping.Category.register(SortItOut.id("sort_it_out")));
 		KeyMappingRegistry.register(sortKeyMapping, true);
 		ClientLevelTickEvents.POST_TICK.listen(SortItOutClient::postLevelTick);
 		ClientNetworkEvents.SERVER_CAPABILITIES_HANDSHAKE_COMPLETED.listen(() -> CONFIG.get().sync());

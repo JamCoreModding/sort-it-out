@@ -1,11 +1,11 @@
 package io.github.jamalam360.sort_it_out.client.worker;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import io.github.jamalam360.sort_it_out.SortItOut;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
 
 public record ClickAction(
 		int containerId,
@@ -37,9 +37,9 @@ public record ClickAction(
 
 	private static int getPlaceButton(ItemStack stack1, ItemStack stack2) {
 		if ((stack1.is(ItemTags.BUNDLES) && !stack2.isEmpty()) || (stack2.is(ItemTags.BUNDLES) && !stack1.isEmpty())) {
-			return GLFW.GLFW_MOUSE_BUTTON_RIGHT;
+			return InputConstants.MOUSE_BUTTON_RIGHT;
 		} else {
-			return GLFW.GLFW_MOUSE_BUTTON_LEFT;
+			return InputConstants.MOUSE_BUTTON_LEFT;
 		}
 	}
 }

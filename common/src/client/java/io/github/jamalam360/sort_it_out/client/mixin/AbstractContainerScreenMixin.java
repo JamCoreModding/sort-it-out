@@ -73,7 +73,7 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 	}
 
 	@Inject(
-			method = "slotClicked",
+			method = "slotClicked(Lnet/minecraft/world/inventory/Slot;IILnet/minecraft/world/inventory/ContainerInput;)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handleContainerInput(IIILnet/minecraft/world/inventory/ContainerInput;Lnet/minecraft/world/entity/player/Player;)V"
